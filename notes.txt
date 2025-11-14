@@ -8,3 +8,5 @@ So the logic should be redesigned so that
 *) Meta: In a VM we check if the gnome key is good for all DEs mentioned, if not, then...
 2) We determine the current Gnome-based DE if we can and try all schemas
 3) If we are in KDE or XFCE and this fails, we go to fallback
+
+Also probably we should not be listening for font changes, this feels a bit too unstable
