@@ -67,9 +67,9 @@ public final class LinuxFontDetector implements FontDetector {
                 if (line.startsWith("'") && line.endsWith("'")) {
                     line = line.substring(1, line.length() - 1);
                 }
-                String[] splitLine = line.split(",");
-                if (splitLine.length >= 1) {
-                    return Optional.of(splitLine[0].trim());
+                String[] parts = line.split(",");
+                if (parts.length >= 1) {
+                    return Optional.of(parts[0].trim());
                 }
                 
             }

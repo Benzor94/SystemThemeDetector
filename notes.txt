@@ -1,0 +1,10 @@
+** Font
+
+It seems that "gsettings get org.gnome.desktop.interface font-name" might not work on Cinnamon or MATE.
+
+So the logic should be redesigned so that
+
+1) We check that gsettings exists (for example by calling the "which gsettings" process)
+*) Meta: In a VM we check if the gnome key is good for all DEs mentioned, if not, then...
+2) We determine the current Gnome-based DE if we can and try all schemas
+3) If we are in KDE or XFCE and this fails, we go to fallback
