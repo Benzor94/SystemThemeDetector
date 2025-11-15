@@ -4,12 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.environment.DesktopEnvironment;
-import hu.benzor.systemthemedetector.theme.Theme;
-import hu.benzor.systemthemedetector.theme.Theme.Font;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
