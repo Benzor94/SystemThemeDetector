@@ -3,7 +3,9 @@ package hu.benzor.systemthemedetector.font;
 import static hu.benzor.systemthemedetector.utils.LinuxUtils.getFontCommand;
 import static hu.benzor.systemthemedetector.utils.LinuxUtils.getOutputLineFromCommand;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -22,6 +24,7 @@ public final class LinuxFontDetector implements FontDetector {
 
     private static LinuxFontDetector instance;
     private final DesktopEnvironment desktopEnvironment = EnvironmentDetector.getDesktopEnvironment();
+    private final List<ListenerHandle<Font>> listeners = new CopyOnWriteArrayList<>();
 
     public static LinuxFontDetector getInstance() {
         if (instance == null) {
@@ -48,12 +51,15 @@ public final class LinuxFontDetector implements FontDetector {
          * We expect font strings of the scheme "'Noto Sans 10'"" or "'Noto Sans, 10'"" (with the single quotes).
          * It seems that if the font is set from KDE, then the name might be separated from the number by a comma
          */
+        log.info("Raw font string: {}", fontString);
         if (fontString == null || fontString.length() < 5) {
             // We allow a font like "'A 3'", whose length is 5. Any shorter than this should be invalid.
+            log.warn("Invalid font string received: {}", fontString);
             return Optional.empty();
         }
         if (!(fontString.startsWith("'") && fontString.endsWith("'"))) {
             // The dconf key contains the font encased in single quotes, so if this condition is not met, something is wrong.
+            log.warn("Invalid font string received: {}", fontString);
             return Optional.empty();
         }
         fontString = fontString.substring(1, fontString.length() - 1); // Cut off the single quotes.
@@ -71,6 +77,7 @@ public final class LinuxFontDetector implements FontDetector {
         }
         String fontName = finalFontString.substring(0, indexOfFirstNumber).trim();
         String fontSize = finalFontString.substring(indexOfFirstNumber, finalFontString.length());
+        log.info("Font name and size detected: {}, {}", fontName, fontSize);
         return Optional.of(new Font(fontName, fontSize));
     }
 
