@@ -1,10 +1,10 @@
 package hu.benzor.systemthemedetector;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.dto.Color;
-import hu.benzor.systemthemedetector.dto.Font;
-import hu.benzor.systemthemedetector.dto.Theme;
+import hu.benzor.systemthemedetector.listener.ListenerHandle;
+import hu.benzor.systemthemedetector.theme.Theme;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,31 +12,34 @@ import lombok.NoArgsConstructor;
 public class SystemThemeDetector {
 
 
-    public static Theme getCurrentTheme() {
+    public static Theme.Mode getCurrentMode() {
         // Stub
-        return Theme.UNKNOWN;
+        return null;
     }
 
-    public static Color getCurrentColor() {
+    public static Optional<Theme.Color> getCurrentColor() {
         // Stub
-        return new Color(0, 0, 0);
+        return Optional.empty();
     }
 
-    public static Font getCurrentFont() {
+    public static Optional<Theme.Font> getCurrentFont() {
         // Stub
-        return new Font("Ubuntu", "10");
+        return Optional.empty();
     }
 
-    public static void onThemeChange(Consumer<Theme> callback) {
+    public static ListenerHandle<Theme.Mode> onModeChange(Consumer<Theme.Mode> callback) {
         // Stub
+        return null;
     }
 
-    public static void onColorChange(Consumer<Color> callback) {
+    public static ListenerHandle<Theme.Color> onColorChange(Consumer<Theme.Color> callback) {
         // Stub
+        return null;
     }
 
-    public static void onFontChange(Consumer<Font> callback) {
+    public static ListenerHandle<Theme.Font> onFontChange(Consumer<Theme.Font> callback) {
         // Stub
+        return null;
     }
 
 }
