@@ -1,14 +1,10 @@
 package hu.benzor.systemthemedetector.linux;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.dto.Font;
-import hu.benzor.systemthemedetector.environment.DE;
-import hu.benzor.systemthemedetector.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.interfaces.FontDetector;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -20,74 +16,42 @@ public final class LinuxFontDetector implements FontDetector {
 
     public static LinuxFontDetector getInstance() {
         if (instance == null) {
-            var fontDetector = new LinuxFontDetector();
-            instance = fontDetector;
+            instance = new LinuxFontDetector();
         }
         return instance;
     }
 
     @Override
     public Optional<Font> getSystemFont() {
-        Optional<String> font = getFontFromGsettings().or(
-            () -> {
-                DE de = EnvironmentDetector.getDesktopEnvironment();
-                return switch (de) {
-                    case KDE -> getFontFallbackKDE();
-                    case XFCE -> getFontFallbackXFCE();
-                    default -> Optional.empty();
-                };
-            }
-        );
-        
-        return font.map(Font::new);
+        /*
+         * We try to get the system font from the org.gnome.desktop.interface schema.
+         * Most desktop environments will set the font-name key here when the font is changed from the GUI settings tool
+         * for Gnome / GTK compatibility.
+         */
+        Optional<String> font = LinuxUtils.getLineFromCommand(LinuxUtils.GSETTINGS_GET_FONT_COMMAND);
+        return font.map(String::trim).flatMap(LinuxFontDetector::getFontFromString);
     }
 
-    @Override
-    public void registerCallback(Consumer<Font> callback) {
-        // TODO Auto-generated method stub
-        
-    }
+    private static Optional<Font> getFontFromString(String fontString) {
 
-    private Optional<String> getFontFromGsettings() {
-        ProcessBuilder pb = new ProcessBuilder(
-            "gsettings",
-            "get",
-            "org.gnome.desktop.interface",
-            "font-name"
-        );
-        pb.redirectErrorStream(true);
-        try {
-            Process process = pb.start();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String line = reader.readLine();
-                if (line == null) {
-                    return Optional.empty();
-                }
-                line.trim();
-                if (line.startsWith("'") && line.endsWith("'")) {
-                    line = line.substring(1, line.length() - 1);
-                }
-                String[] parts = line.split(",");
-                if (parts.length >= 1) {
-                    return Optional.of(parts[0].trim());
-                }
-                
-            }
-            process.waitFor();
-        } catch (IOException | InterruptedException | NullPointerException e) {
-
+        if (fontString.contains(",")) {
+            /*
+             * It seems that if the font is set from KDE, then the name might be separated from the number by a comma, like
+             * "Noto Sans, 10", otherwise it is of the format "Noto Sans 10".
+             */
+            fontString = fontString.replace(",", "");
         }
-        return Optional.empty();
-    }
-
-    private Optional<String> getFontFallbackKDE() {
-        // Stub
-        return Optional.empty();
-    }
-
-    private Optional<String> getFontFallbackXFCE() {
-        // Stub
-        return Optional.empty();
+        String finalFontString = new String(fontString);
+        OptionalInt indexOfFirstNumber = IntStream.range(0, fontString.length()).filter(
+            i -> Character.isDigit(finalFontString.charAt(i))
+        ).findFirst();
+        if (!indexOfFirstNumber.isPresent()) {
+            return Optional.empty();
+        }
+        int index = indexOfFirstNumber.getAsInt();
+        String fontName = finalFontString.substring(0, index).trim();
+        String fontSize = finalFontString.substring(index, finalFontString.length());
+        return Optional.of(new Font(fontName, fontSize));
     }
 
 }

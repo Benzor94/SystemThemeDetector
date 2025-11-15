@@ -24,7 +24,7 @@ public class SystemThemeDetector {
 
     public static Font getCurrentFont() {
         // Stub
-        return new Font("Ubuntu");
+        return new Font("Ubuntu", "10");
     }
 
     public static void onThemeChange(Consumer<Theme> callback) {

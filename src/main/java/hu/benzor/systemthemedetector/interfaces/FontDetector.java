@@ -1,14 +1,12 @@
 package hu.benzor.systemthemedetector.interfaces;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import hu.benzor.systemthemedetector.dto.Font;
+import hu.benzor.systemthemedetector.linux.LinuxFontDetector;
 
-public interface FontDetector {
+public sealed interface FontDetector permits LinuxFontDetector {
 
     Optional<Font> getSystemFont();
-
-    void registerCallback(Consumer<Font> callback);
 
 }
