@@ -10,3 +10,17 @@ So the logic should be redesigned so that
 3) If we are in KDE or XFCE and this fails, we go to fallback
 
 Also probably we should not be listening for font changes, this feels a bit too unstable
+
+** System theme
+
+gdbus call --session --timeout=1000 \
+             --dest=org.freedesktop.portal.Desktop \
+             --object-path /org/freedesktop/portal/desktop \
+             --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme
+
+** Accent color
+
+gdbus call --session --timeout=1000 \
+  --dest=org.freedesktop.portal.Desktop \
+  --object-path /org/freedesktop/portal/desktop \
+  --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance accent-color
