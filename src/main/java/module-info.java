@@ -1,4 +1,4 @@
-module hu.benzor.systemthemedetactor {
+module hu.benzor.systemthemedetector {
     requires static lombok;
     requires org.slf4j;
     requires ch.qos.logback.classic;
