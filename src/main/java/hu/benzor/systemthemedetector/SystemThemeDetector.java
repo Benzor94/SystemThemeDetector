@@ -9,6 +9,8 @@ import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.internal.environment.Platform;
 import hu.benzor.systemthemedetector.internal.font.FontDetector;
 import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
+import hu.benzor.systemthemedetector.internal.mode.LinuxModeDetector;
+import hu.benzor.systemthemedetector.internal.mode.ModeDetector;
 import hu.benzor.systemthemedetector.monitoring.api.MonitorHandle;
 import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
@@ -22,22 +24,28 @@ public class SystemThemeDetector {
     private static final Platform platform;
 
     private static final FontDetector fontDetector;
+    private static final ModeDetector modeDetector;
     private static final List<MonitorHandle<Font>> fontChangeMonitors = new CopyOnWriteArrayList<>();
+    private static final List<MonitorHandle<Mode>> modeChangeMonitors = new CopyOnWriteArrayList<>();
 
     static {
         platform = EnvironmentDetector.getOperatingSystem();
-        fontDetector = switch (platform) {
-            case UNKNOWN -> throw new RuntimeException("Not implemented yet");
-            case WINDOWS -> throw new RuntimeException("Not implemented yet");
-            case MACOS -> throw new RuntimeException("Not implemented yet");
-            case LINUX -> new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
+        switch (platform) {
+            case UNKNOWN, WINDOWS, MACOS -> {
+                fontDetector = new LinuxFontDetector(null);
+                modeDetector = new LinuxModeDetector();
+            }
+            case LINUX -> {
+                fontDetector = new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
+                modeDetector = new LinuxModeDetector();
+            }
+            default -> throw new IllegalStateException();
         };
     }
 
 
     public static Mode getCurrentMode() {
-        // Stub
-        return null;
+        return modeDetector.getSystemMode();
     }
 
     public static Optional<Color> getCurrentAccentColor() {
@@ -51,8 +59,9 @@ public class SystemThemeDetector {
     }
 
     public static MonitorHandle<Mode> onModeChange(Consumer<Mode> callback) {
-        // Stub
-        return null;
+        var handle = modeDetector.registerCallback(callback);
+        modeChangeMonitors.add(handle);
+        return handle;
     }
 
     public static MonitorHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
@@ -67,7 +76,8 @@ public class SystemThemeDetector {
     }
 
     public static void stopAllModeChangeMonitors() {
-        // Stub
+        modeChangeMonitors.forEach(MonitorHandle::stop);
+        modeChangeMonitors.clear();
     }
 
     public static void stopAllAccentColorChangeMonitors() {
