@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.font;
+package hu.benzor.systemthemedetector.internal.font;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -6,11 +6,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.monitoring.MonitorHandle;
-import hu.benzor.systemthemedetector.monitoring.MonitorHandleImpl;
-import hu.benzor.systemthemedetector.monitoring.ProcessOutputMonitor;
+import hu.benzor.systemthemedetector.internal.monitoring.ProcessOutputMonitor;
+import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
+import hu.benzor.systemthemedetector.monitoring.api.MonitorHandle;
+import hu.benzor.systemthemedetector.monitoring.api.MonitorHandleImpl;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
-import hu.benzor.systemthemedetector.utils.ProcessUtils;
 
 public abstract sealed class FontDetector permits LinuxFontDetector {
 

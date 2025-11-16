@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.environment;
+package hu.benzor.systemthemedetector.internal.environment;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

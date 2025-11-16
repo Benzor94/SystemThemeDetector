@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.environment;
+package hu.benzor.systemthemedetector.internal.environment;
 
 public enum DesktopEnvironment {
 

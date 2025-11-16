@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.monitoring;
+package hu.benzor.systemthemedetector.monitoring.api;
 
 import hu.benzor.systemthemedetector.theme.Theme;
 

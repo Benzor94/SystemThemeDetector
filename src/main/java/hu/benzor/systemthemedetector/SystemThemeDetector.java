@@ -5,11 +5,11 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.environment.Platform;
-import hu.benzor.systemthemedetector.environment.EnvironmentDetector;
-import hu.benzor.systemthemedetector.font.FontDetector;
-import hu.benzor.systemthemedetector.font.LinuxFontDetector;
-import hu.benzor.systemthemedetector.monitoring.MonitorHandle;
+import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
+import hu.benzor.systemthemedetector.internal.environment.Platform;
+import hu.benzor.systemthemedetector.internal.font.FontDetector;
+import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
+import hu.benzor.systemthemedetector.monitoring.api.MonitorHandle;
 import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;

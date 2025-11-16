@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.monitoring;
+package hu.benzor.systemthemedetector.internal.monitoring;
 
 import java.io.BufferedReader;
 import java.io.IOException;

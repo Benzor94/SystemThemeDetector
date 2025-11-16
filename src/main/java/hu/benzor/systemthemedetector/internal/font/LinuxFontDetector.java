@@ -1,8 +1,8 @@
-package hu.benzor.systemthemedetector.font;
+package hu.benzor.systemthemedetector.internal.font;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.internal.environment.DesktopEnvironment;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import lombok.RequiredArgsConstructor;
 
