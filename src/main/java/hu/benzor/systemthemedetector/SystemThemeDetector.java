@@ -6,7 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import hu.benzor.systemthemedetector.environment.Platform;
-import hu.benzor.systemthemedetector.environment.DesktopEnvironment;
 import hu.benzor.systemthemedetector.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.font.FontDetector;
 import hu.benzor.systemthemedetector.font.LinuxFontDetector;

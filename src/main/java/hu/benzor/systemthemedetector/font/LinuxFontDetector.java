@@ -13,8 +13,26 @@ public final class LinuxFontDetector extends FontDetector {
 
     @Override
     protected ProcessBuilder getCommandProcessBuilder() {
-        // TODO Auto-generated method stub
-        return null;
+        ProcessBuilder pb = new ProcessBuilder(
+            "gsettings",
+            "get",
+            getDconfInterfaceSchema(),
+            "font-name"
+       );
+       pb.redirectErrorStream(true);
+       return pb;
+    }
+
+    @Override
+    protected ProcessBuilder getMonitorProcessBuilder() {
+        ProcessBuilder pb = new ProcessBuilder(
+            "gsettings",
+            "monitor",
+            getDconfInterfaceSchema(),
+            "font-name"
+        );
+        pb.redirectErrorStream(true);
+        return pb;
     }
 
     @Override
@@ -29,10 +47,12 @@ public final class LinuxFontDetector extends FontDetector {
         return Optional.empty();
     }
 
-    @Override
-    protected ProcessBuilder getMonitorProcessBuilder() {
-        // TODO Auto-generated method stub
-        return null;
+    private String getDconfInterfaceSchema() {
+        return switch (desktop) {
+            case GNOME, KDE, XFCE, UNKNOWN -> "org.gnome.desktop.interface";
+            case CINNAMON -> "org.cinnamon.desktop.interface";
+            case MATE -> "org.mate.interface";
+        };
     }
 
 }
