@@ -55,6 +55,15 @@ public class LinuxUtils {
         return GDBUS_GET_ACCENT_COLOR_COMMAND;
     }
 
+    public static List<String> getFontChangeMonitoringCommand(DesktopEnvironment de) {
+        return List.of(
+            "gsettings",
+            "monitor",
+            getInterfaceSchemaFromDesktop(de);
+            "font-name"
+        );
+    }
+
     public static Optional<String> getOutputLineFromCommand(List<String> command) {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);

@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.listener;
+package hu.benzor.systemthemedetector.monitoring;
 
 import hu.benzor.systemthemedetector.theme.Theme;
 

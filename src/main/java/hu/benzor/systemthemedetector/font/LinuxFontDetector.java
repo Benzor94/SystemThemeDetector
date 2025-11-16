@@ -1,37 +1,28 @@
 package hu.benzor.systemthemedetector.font;
 
 import static hu.benzor.systemthemedetector.utils.LinuxUtils.getFontCommand;
+import static hu.benzor.systemthemedetector.utils.LinuxUtils.getFontChangeMonitoringCommand;
 import static hu.benzor.systemthemedetector.utils.LinuxUtils.getOutputLineFromCommand;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.environment.DesktopEnvironment;
-import hu.benzor.systemthemedetector.environment.EnvironmentDetector;
-import hu.benzor.systemthemedetector.listener.ListenerHandle;
-import hu.benzor.systemthemedetector.theme.Theme;
+import hu.benzor.systemthemedetector.monitoring.ListenerHandle;
+import hu.benzor.systemthemedetector.monitoring.ProcessRunner;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public final class LinuxFontDetector implements FontDetector {
 
-    private static LinuxFontDetector instance;
-    private final DesktopEnvironment desktopEnvironment = EnvironmentDetector.getDesktopEnvironment();
-    private final List<ListenerHandle<Font>> listeners = new CopyOnWriteArrayList<>();
+    private final DesktopEnvironment desktopEnvironment;
+    private final ExecutorService executorService;
 
-    public static LinuxFontDetector getInstance() {
-        if (instance == null) {
-            instance = new LinuxFontDetector();
-        }
-        return instance;
-    }
 
     @Override
     public Optional<Font> getSystemFont() {
@@ -41,12 +32,13 @@ public final class LinuxFontDetector implements FontDetector {
     }
 
     @Override
-    public ListenerHandle<Font> registerCallback(Consumer<Font> callback) {
-        // Stub
+    public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
+        ProcessBuilder pb = new ProcessBuilder(getFontChangeMonitoringCommand(desktopEnvironment));
+
         return null;
     }
 
-    static Optional<Theme.Font> getFontFromString(String fontString) {
+    static Optional<Font> getFontFromString(String fontString) {
         /*
          * We expect font strings of the scheme "'Noto Sans 10'"" or "'Noto Sans, 10'"" (with the single quotes).
          * It seems that if the font is set from KDE, then the name might be separated from the number by a comma
@@ -80,5 +72,13 @@ public final class LinuxFontDetector implements FontDetector {
         log.info("Font name and size detected: {}, {}", fontName, fontSize);
         return Optional.of(new Font(fontName, fontSize));
     }
+
+    private Optional<Font> monitoringOutputMapper(String output) {
+
+        if (output == null || !output.startsWith("font-name:")) {
+            return Optional.empty();
+        }
+
+    } 
 
 }

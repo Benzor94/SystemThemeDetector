@@ -3,7 +3,7 @@ package hu.benzor.systemthemedetector;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.listener.ListenerHandle;
+import hu.benzor.systemthemedetector.monitoring.ListenerHandle;
 import hu.benzor.systemthemedetector.theme.Theme;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
