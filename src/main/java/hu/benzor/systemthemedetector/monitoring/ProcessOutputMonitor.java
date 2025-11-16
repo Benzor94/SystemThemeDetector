@@ -9,7 +9,7 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ProcessRunner<T> implements Callable<Void> {
+public class ProcessOutputMonitor<T> implements Callable<Void> {
 
     private final ProcessBuilder processBuilder;
     private final Function<String, T> outputMapper;
@@ -18,20 +18,23 @@ public class ProcessRunner<T> implements Callable<Void> {
     @Override
     public Void call() {
         processBuilder.redirectErrorStream(true);
+        Process process = null;
         try {
-            Process process = processBuilder.start();
+            process = processBuilder.start();
             try (BufferedReader reader = process.inputReader()) {
                 String line;
                 while (!Thread.currentThread().isInterrupted() && (line = reader.readLine()) != null) {
                     callback.accept(outputMapper.apply(line));
                 }
-            } catch (IOException e) {
-
-            } finally {
-                process.destroy();
             }
         } catch (IOException e) {
 
+            // Log this
+
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
         }
         
         return null;
