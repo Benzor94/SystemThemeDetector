@@ -1,42 +1,92 @@
 package hu.benzor.systemthemedetector;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.dto.Color;
-import hu.benzor.systemthemedetector.dto.Font;
-import hu.benzor.systemthemedetector.dto.Theme;
+import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
+import hu.benzor.systemthemedetector.internal.environment.Platform;
+import hu.benzor.systemthemedetector.internal.font.FontDetector;
+import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
+import hu.benzor.systemthemedetector.internal.mode.LinuxModeDetector;
+import hu.benzor.systemthemedetector.internal.mode.ModeDetector;
+import hu.benzor.systemthemedetector.monitoring.api.MonitorHandle;
+import hu.benzor.systemthemedetector.theme.Theme.Color;
+import hu.benzor.systemthemedetector.theme.Theme.Font;
+import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SystemThemeDetector {
 
+    private static final Platform platform;
 
-    public static Theme getCurrentTheme() {
-        // Stub
-        return Theme.UNKNOWN;
+    private static final FontDetector fontDetector;
+    private static final ModeDetector modeDetector;
+    private static final List<MonitorHandle<Font>> fontChangeMonitors = new CopyOnWriteArrayList<>();
+    private static final List<MonitorHandle<Mode>> modeChangeMonitors = new CopyOnWriteArrayList<>();
+
+    static {
+        platform = EnvironmentDetector.getOperatingSystem();
+        switch (platform) {
+            case UNKNOWN, WINDOWS, MACOS -> {
+                fontDetector = new LinuxFontDetector(null);
+                modeDetector = new LinuxModeDetector();
+            }
+            case LINUX -> {
+                fontDetector = new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
+                modeDetector = new LinuxModeDetector();
+            }
+            default -> throw new IllegalStateException();
+        };
     }
 
-    public static Color getCurrentColor() {
-        // Stub
-        return new Color(0, 0, 0);
+
+    public static Mode getCurrentMode() {
+        return modeDetector.getSystemMode();
     }
 
-    public static Font getCurrentFont() {
+    public static Optional<Color> getCurrentAccentColor() {
         // Stub
-        return new Font("Ubuntu", "10");
+        return Optional.empty();
     }
 
-    public static void onThemeChange(Consumer<Theme> callback) {
+    public static Optional<Font> getCurrentFont() {
+        // Stub
+        return fontDetector.getSystemFont();
+    }
+
+    public static MonitorHandle<Mode> onModeChange(Consumer<Mode> callback) {
+        var handle = modeDetector.registerCallback(callback);
+        modeChangeMonitors.add(handle);
+        return handle;
+    }
+
+    public static MonitorHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
+        // Stub
+        return null;
+    }
+
+    public static MonitorHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
+        var handle = fontDetector.registerCallback(callback);
+        fontChangeMonitors.add(handle);        
+        return handle;
+    }
+
+    public static void stopAllModeChangeMonitors() {
+        modeChangeMonitors.forEach(MonitorHandle::stop);
+        modeChangeMonitors.clear();
+    }
+
+    public static void stopAllAccentColorChangeMonitors() {
         // Stub
     }
 
-    public static void onColorChange(Consumer<Color> callback) {
-        // Stub
-    }
-
-    public static void onFontChange(Consumer<Font> callback) {
-        // Stub
+    public static void stopAllFontChangeMonitors() {
+        fontChangeMonitors.forEach(MonitorHandle::stop);
+        fontChangeMonitors.clear();
     }
 
 }

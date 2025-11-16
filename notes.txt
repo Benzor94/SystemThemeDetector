@@ -24,3 +24,8 @@ gdbus call --session --timeout=1000 \
   --dest=org.freedesktop.portal.Desktop \
   --object-path /org/freedesktop/portal/desktop \
   --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance accent-color
+
+** Notes
+
+* Detectors should probably be interfaces again, since it is likely that the various methods to parse output
+  will differ greatly between the platforms
