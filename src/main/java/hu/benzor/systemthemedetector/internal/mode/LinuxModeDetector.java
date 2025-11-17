@@ -39,7 +39,7 @@ public final class LinuxModeDetector implements ModeDetector {
         return new ListenerHandleImpl<>(Mode.class, task);
     }
 
-    protected ProcessBuilder getCommandProcessBuilder() {
+    private ProcessBuilder getCommandProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gdbus",
             "call",
@@ -54,7 +54,7 @@ public final class LinuxModeDetector implements ModeDetector {
         return pb;
     }
 
-    protected ProcessBuilder getMonitorProcessBuilder() {
+    private ProcessBuilder getMonitorProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "dbus-monitor",
             "type='signal',interface='org.freedesktop.portal.Settings',arg0='org.freedesktop.appearance',arg1='color-scheme'"
@@ -64,7 +64,7 @@ public final class LinuxModeDetector implements ModeDetector {
 
     protected Mode getModeFromCommandOutput(String output) {
         /*
-         * Here we expect strings of the form "(<<uint32 n>>,)" where n is an unsigned integer,
+         * Here we expect strings of the form "(<uint32 n>,)" where n is an unsigned integer,
          * and we want to extract this integer.
          */
         if (output == null) {

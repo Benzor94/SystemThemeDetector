@@ -37,7 +37,7 @@ public final class LinuxFontDetector implements FontDetector {
         return new ListenerHandleImpl<>(Font.class, task);
     }
 
-    protected ProcessBuilder getCommandProcessBuilder() {
+    private ProcessBuilder getCommandProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
             "get",
@@ -47,7 +47,7 @@ public final class LinuxFontDetector implements FontDetector {
        return pb;
     }
 
-    protected ProcessBuilder getMonitorProcessBuilder() {
+    private ProcessBuilder getMonitorProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
             "monitor",

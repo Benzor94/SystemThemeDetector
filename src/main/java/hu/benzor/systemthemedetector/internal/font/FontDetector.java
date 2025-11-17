@@ -8,8 +8,8 @@ import hu.benzor.systemthemedetector.theme.Theme.Font;
 
 public sealed interface FontDetector permits LinuxFontDetector {
 
-    public Optional<Font> getSystemFont();
+    Optional<Font> getSystemFont();
 
-    public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback);
+    ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback);
 
 }

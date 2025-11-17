@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
+import hu.benzor.systemthemedetector.internal.accentcolor.AccentColorDetector;
+import hu.benzor.systemthemedetector.internal.accentcolor.LinuxAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.internal.environment.Platform;
 import hu.benzor.systemthemedetector.internal.font.FontDetector;
@@ -25,8 +27,10 @@ public class SystemThemeDetector {
 
     private static final FontDetector fontDetector;
     private static final ModeDetector modeDetector;
-    private static final List<ListenerHandle<Font>> fontChangeMonitors = new CopyOnWriteArrayList<>();
-    private static final List<ListenerHandle<Mode>> modeChangeMonitors = new CopyOnWriteArrayList<>();
+    private static final AccentColorDetector accentColorDetector;
+    private static final List<ListenerHandle<Font>> fontChangeListeners = new CopyOnWriteArrayList<>();
+    private static final List<ListenerHandle<Mode>> modeChangeListeners = new CopyOnWriteArrayList<>();
+    private static final List<ListenerHandle<Color>> accentColorChangeListeners = new CopyOnWriteArrayList<>();
 
     static {
         platform = EnvironmentDetector.getOperatingSystem();
@@ -34,10 +38,12 @@ public class SystemThemeDetector {
             case UNKNOWN, WINDOWS, MACOS -> {
                 fontDetector = new LinuxFontDetector(null);
                 modeDetector = new LinuxModeDetector();
+                accentColorDetector = new LinuxAccentColorDetector();
             }
             case LINUX -> {
                 fontDetector = new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
                 modeDetector = new LinuxModeDetector();
+                accentColorDetector = new LinuxAccentColorDetector();
             }
             default -> throw new IllegalStateException();
         };
@@ -49,44 +55,44 @@ public class SystemThemeDetector {
     }
 
     public static Optional<Color> getCurrentAccentColor() {
-        // Stub
-        return Optional.empty();
+        return accentColorDetector.getSystemAccentColor();
     }
 
     public static Optional<Font> getCurrentFont() {
-        // Stub
         return fontDetector.getSystemFont();
     }
 
     public static ListenerHandle<Mode> onModeChange(Consumer<Mode> callback) {
         var handle = modeDetector.registerCallback(callback);
-        modeChangeMonitors.add(handle);
+        modeChangeListeners.add(handle);
         return handle;
     }
 
     public static ListenerHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
-        // Stub
-        return null;
+        var handle = accentColorDetector.registerCallback(callback);
+        accentColorChangeListeners.add(handle);
+        return handle;
     }
 
     public static ListenerHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
         var handle = fontDetector.registerCallback(callback);
-        fontChangeMonitors.add(handle);        
+        fontChangeListeners.add(handle);        
         return handle;
     }
 
     public static void stopAllModeChangeMonitors() {
-        modeChangeMonitors.forEach(ListenerHandle::stop);
-        modeChangeMonitors.clear();
+        modeChangeListeners.forEach(ListenerHandle::stop);
+        modeChangeListeners.clear();
     }
 
     public static void stopAllAccentColorChangeMonitors() {
-        // Stub
+        accentColorChangeListeners.forEach(ListenerHandle::stop);
+        accentColorChangeListeners.clear();
     }
 
     public static void stopAllFontChangeMonitors() {
-        fontChangeMonitors.forEach(ListenerHandle::stop);
-        fontChangeMonitors.clear();
+        fontChangeListeners.forEach(ListenerHandle::stop);
+        fontChangeListeners.clear();
     }
 
 }

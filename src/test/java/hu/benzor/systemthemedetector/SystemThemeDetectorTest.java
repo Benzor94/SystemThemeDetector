@@ -1,12 +1,14 @@
 package hu.benzor.systemthemedetector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 
@@ -30,6 +32,21 @@ public class SystemThemeDetectorTest {
         Mode mode = SystemThemeDetector.getCurrentMode();
         assertEquals(Mode.DARK, mode);
 
+    }
+
+    @Test
+    void testGetCurrentAccentColor() {
+
+        Optional<Color> color = SystemThemeDetector.getCurrentAccentColor();
+        assertTrue(color.isPresent());
+        Color actualColor = color.get();
+        if (actualColor instanceof Color(int r, int g, int b)) {
+            assertEquals(79, r);
+            assertEquals(90, g);
+            assertEquals(49, b);
+        } else {
+            assertFalse(true);
+        }
     }
 
     @Test

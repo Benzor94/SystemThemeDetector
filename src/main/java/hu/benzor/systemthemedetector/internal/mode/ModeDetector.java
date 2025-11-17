@@ -7,8 +7,8 @@ import hu.benzor.systemthemedetector.theme.Theme.Mode;
 
 public sealed interface ModeDetector permits LinuxModeDetector {
 
-    public Mode getSystemMode();
+    Mode getSystemMode();
 
-    public ListenerHandle<Mode> registerCallback(Consumer<Mode> callback);
+    ListenerHandle<Mode> registerCallback(Consumer<Mode> callback);
 
 }
