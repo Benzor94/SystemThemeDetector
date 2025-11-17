@@ -36,6 +36,7 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
                     /*
                      * We assume that there is no line which contains both the
                      * substring that marks the beginning of the block and the end of the block.
+                     * We also assume there are no nested blocks.
                      */
                     if (line.contains(lineBeforeBlockContainsThis)) {
                         weAreInBlock = true;
