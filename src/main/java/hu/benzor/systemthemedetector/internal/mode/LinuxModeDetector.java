@@ -21,7 +21,7 @@ public final class LinuxModeDetector implements ModeDetector {
 
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
     private final Pattern cmdOutputPattern = Pattern.compile("\\(<uint32 (\\d+)>,\\)");
-    private final Pattern monitorOutputPattern = Pattern.compile("variant\\s+uint32\\s+(\\d+)");
+    private final Pattern listenerOutputPattern = Pattern.compile("variant\\s+uint32\\s+(\\d+)");
 
     @Override
     public Mode getSystemMode() {
@@ -32,9 +32,9 @@ public final class LinuxModeDetector implements ModeDetector {
 
     @Override
     public ListenerHandle<Mode> registerCallback(Consumer<Mode> callback) {
-        ProcessBuilder pb = getMonitorProcessBuilder();
+        ProcessBuilder pb = getListenerProcessBuilder();
         Future<Void> task = executorService.submit(
-            new ProcessOutputLineListener<>(pb, this::getModeFromMonitorOutput, callback, "variant")
+            new ProcessOutputLineListener<>(pb, this::getModeFromListenerOutput, callback, "variant")
         );
         return new ListenerHandleImpl<>(Mode.class, task);
     }
@@ -54,7 +54,7 @@ public final class LinuxModeDetector implements ModeDetector {
         return pb;
     }
 
-    private ProcessBuilder getMonitorProcessBuilder() {
+    private ProcessBuilder getListenerProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "dbus-monitor",
             "type='signal',interface='org.freedesktop.portal.Settings',arg0='org.freedesktop.appearance',arg1='color-scheme'"
@@ -76,7 +76,7 @@ public final class LinuxModeDetector implements ModeDetector {
         
     }
 
-    protected Mode getModeFromMonitorOutput(String output) {
+    protected Mode getModeFromListenerOutput(String output) {
         /*
          * Here we expect strings of the form "    variant     uint32 n", where we do not
          * constrain the number of whitespace characters, and n is an unsigned
@@ -87,7 +87,7 @@ public final class LinuxModeDetector implements ModeDetector {
             return Mode.APP_DEFAULT;
         }
         output = output.trim();
-        Matcher matcher = monitorOutputPattern.matcher(output);
+        Matcher matcher = listenerOutputPattern.matcher(output);
         return extractModeFromMatcher(output, matcher);
     }
 

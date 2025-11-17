@@ -30,9 +30,9 @@ public final class LinuxFontDetector implements FontDetector {
 
     @Override
     public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
-        ProcessBuilder pb = getMonitorProcessBuilder();
+        ProcessBuilder pb = getListenerProcessBuilder();
         Future<Void> task = executorService.submit(
-            new ProcessOutputLineListener<>(pb, this::getFontFromMonitorOutput, callback)
+            new ProcessOutputLineListener<>(pb, this::getFontFromListenerOutput, callback)
         );
         return new ListenerHandleImpl<>(Font.class, task);
     }
@@ -47,7 +47,7 @@ public final class LinuxFontDetector implements FontDetector {
        return pb;
     }
 
-    private ProcessBuilder getMonitorProcessBuilder() {
+    private ProcessBuilder getListenerProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
             "monitor",
@@ -92,7 +92,7 @@ public final class LinuxFontDetector implements FontDetector {
         return Optional.of(new Font(fontName, fontSize));
     }
 
-    protected Optional<Font> getFontFromMonitorOutput(String output) {
+    protected Optional<Font> getFontFromListenerOutput(String output) {
         /*
          * Here we expect the output string to look like "font-name: 'Noto Sans 10'"
          * or "font-name: 'Noto Sans, 10'".

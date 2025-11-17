@@ -33,6 +33,13 @@ public sealed interface Theme permits Theme.Mode, Theme.Color, Theme.Font {
             validateInput(blue);
         }
 
+        public static Color fromArray(int[] rgbNumbers) {
+            if (rgbNumbers.length != 3) {
+                throw new IllegalArgumentException("Input array's length must be 3.");
+            }
+            return new Color(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2]);
+        }
+
         private void validateInput(int input) {
             if (input < 0 || input > 255) {
                 throw new IllegalArgumentException("Color must be between 0 and 255.");

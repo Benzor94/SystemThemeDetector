@@ -78,4 +78,20 @@ public class SystemThemeDetectorTest {
         handle.stop();
 
     }
+
+    @Test
+    void testOnAccentColorChange() throws InterruptedException {
+        var handle = SystemThemeDetector.onAccentColorChange(
+            optColor -> {
+                if (optColor.isEmpty()) {
+                    System.out.println("Accent color was changed but could not be determined");
+                } else {
+                    Color color = optColor.get();
+                    System.out.println("Accent color was changed to " + color + ".");
+                }
+            }
+        );
+        Thread.sleep(20_000);
+        handle.stop();
+    }
 }
