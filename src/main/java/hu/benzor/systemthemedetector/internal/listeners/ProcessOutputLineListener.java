@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.internal.monitoring;
+package hu.benzor.systemthemedetector.internal.listeners;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,14 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ProcessOutputLineMonitor<T> implements Callable<Void> {
+public class ProcessOutputLineListener<T> implements Callable<Void> {
 
     private final ProcessBuilder processBuilder;
     private final Function<String, T> outputMapper;
     private final Consumer<T> callback;
     private final String filter;
 
-    public ProcessOutputLineMonitor(
+    public ProcessOutputLineListener(
         ProcessBuilder processBuilder,
         Function<String, T> outputMapper,
         Consumer<T> callback

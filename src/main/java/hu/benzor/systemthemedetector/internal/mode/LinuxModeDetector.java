@@ -1,20 +1,44 @@
 package hu.benzor.systemthemedetector.internal.mode;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputLineListener;
+import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
+import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
+import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor
-public final class LinuxModeDetector extends ModeDetector {
+public final class LinuxModeDetector implements ModeDetector {
 
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
     private final Pattern cmdOutputPattern = Pattern.compile("\\(<uint32 (\\d+)>,\\)");
     private final Pattern monitorOutputPattern = Pattern.compile("variant\\s+uint32\\s+(\\d+)");
 
     @Override
+    public Mode getSystemMode() {
+        return ProcessUtils.getOutputLineFromProcess(getCommandProcessBuilder())
+        .map(this::getModeFromCommandOutput)
+        .orElse(Mode.APP_DEFAULT);
+    }
+
+    @Override
+    public ListenerHandle<Mode> registerCallback(Consumer<Mode> callback) {
+        ProcessBuilder pb = getMonitorProcessBuilder();
+        Future<Void> task = executorService.submit(
+            new ProcessOutputLineListener<>(pb, this::getModeFromMonitorOutput, callback, "variant")
+        );
+        return new ListenerHandleImpl<>(Mode.class, task);
+    }
+
     protected ProcessBuilder getCommandProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gdbus",
@@ -30,7 +54,6 @@ public final class LinuxModeDetector extends ModeDetector {
         return pb;
     }
 
-    @Override
     protected ProcessBuilder getMonitorProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "dbus-monitor",
@@ -39,7 +62,6 @@ public final class LinuxModeDetector extends ModeDetector {
         return pb;
     }
 
-    @Override
     protected Mode getModeFromCommandOutput(String output) {
         /*
          * Here we expect strings of the form "(<<uint32 n>>,)" where n is an unsigned integer,
@@ -54,7 +76,6 @@ public final class LinuxModeDetector extends ModeDetector {
         
     }
 
-    @Override
     protected Mode getModeFromMonitorOutput(String output) {
         /*
          * Here we expect strings of the form "    variant     uint32 n", where we do not
@@ -81,7 +102,9 @@ public final class LinuxModeDetector extends ModeDetector {
             if (modeNumber < 0 || modeNumber > 2) {
                 log.warn("Unrecognited mode number {}.", modeNumber);
             }
-            return Mode.fromId(modeNumber);
+            Mode mode = Mode.fromId(modeNumber);
+            log.info("Mode determined: {}", mode);
+            return mode;
         } catch (NumberFormatException e) {
             log.warn("Invalid mode string received: {}.", output);
             return Mode.APP_DEFAULT;

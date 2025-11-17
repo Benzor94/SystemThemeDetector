@@ -1,20 +1,42 @@
 package hu.benzor.systemthemedetector.internal.font;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.internal.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputLineListener;
+import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
+import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
+import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class LinuxFontDetector extends FontDetector {
+public final class LinuxFontDetector implements FontDetector {
 
     private final DesktopEnvironment desktop;
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
+    public Optional<Font> getSystemFont() {
+        return ProcessUtils.getOutputLineFromProcess(getCommandProcessBuilder()).flatMap(this::getFontFromCommandOutput);
+    };
+
+    @Override
+    public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
+        ProcessBuilder pb = getMonitorProcessBuilder();
+        Future<Void> task = executorService.submit(
+            new ProcessOutputLineListener<>(pb, this::getFontFromMonitorOutput, callback)
+        );
+        return new ListenerHandleImpl<>(Font.class, task);
+    }
+
     protected ProcessBuilder getCommandProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
@@ -25,7 +47,6 @@ public final class LinuxFontDetector extends FontDetector {
        return pb;
     }
 
-    @Override
     protected ProcessBuilder getMonitorProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
@@ -36,7 +57,6 @@ public final class LinuxFontDetector extends FontDetector {
         return pb;
     }
 
-    @Override
     protected Optional<Font> getFontFromCommandOutput(String output) {
         /*
          * We expect font strings of the scheme "'Noto Sans 10'"" or "'Noto Sans, 10'"" (with the single quotes).
@@ -72,7 +92,6 @@ public final class LinuxFontDetector extends FontDetector {
         return Optional.of(new Font(fontName, fontSize));
     }
 
-    @Override
     protected Optional<Font> getFontFromMonitorOutput(String output) {
         /*
          * Here we expect the output string to look like "font-name: 'Noto Sans 10'"

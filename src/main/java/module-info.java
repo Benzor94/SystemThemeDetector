@@ -4,6 +4,6 @@ module hu.benzor.systemthemedetector {
     requires ch.qos.logback.classic;
 
     exports hu.benzor.systemthemedetector;
-    exports hu.benzor.systemthemedetector.monitoring.api;
+    exports hu.benzor.systemthemedetector.listeners.api;
     exports hu.benzor.systemthemedetector.theme;
 }

@@ -11,7 +11,7 @@ import hu.benzor.systemthemedetector.internal.font.FontDetector;
 import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
 import hu.benzor.systemthemedetector.internal.mode.LinuxModeDetector;
 import hu.benzor.systemthemedetector.internal.mode.ModeDetector;
-import hu.benzor.systemthemedetector.monitoring.api.MonitorHandle;
+import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
@@ -25,8 +25,8 @@ public class SystemThemeDetector {
 
     private static final FontDetector fontDetector;
     private static final ModeDetector modeDetector;
-    private static final List<MonitorHandle<Font>> fontChangeMonitors = new CopyOnWriteArrayList<>();
-    private static final List<MonitorHandle<Mode>> modeChangeMonitors = new CopyOnWriteArrayList<>();
+    private static final List<ListenerHandle<Font>> fontChangeMonitors = new CopyOnWriteArrayList<>();
+    private static final List<ListenerHandle<Mode>> modeChangeMonitors = new CopyOnWriteArrayList<>();
 
     static {
         platform = EnvironmentDetector.getOperatingSystem();
@@ -58,25 +58,25 @@ public class SystemThemeDetector {
         return fontDetector.getSystemFont();
     }
 
-    public static MonitorHandle<Mode> onModeChange(Consumer<Mode> callback) {
+    public static ListenerHandle<Mode> onModeChange(Consumer<Mode> callback) {
         var handle = modeDetector.registerCallback(callback);
         modeChangeMonitors.add(handle);
         return handle;
     }
 
-    public static MonitorHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
+    public static ListenerHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
         // Stub
         return null;
     }
 
-    public static MonitorHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
+    public static ListenerHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
         var handle = fontDetector.registerCallback(callback);
         fontChangeMonitors.add(handle);        
         return handle;
     }
 
     public static void stopAllModeChangeMonitors() {
-        modeChangeMonitors.forEach(MonitorHandle::stop);
+        modeChangeMonitors.forEach(ListenerHandle::stop);
         modeChangeMonitors.clear();
     }
 
@@ -85,7 +85,7 @@ public class SystemThemeDetector {
     }
 
     public static void stopAllFontChangeMonitors() {
-        fontChangeMonitors.forEach(MonitorHandle::stop);
+        fontChangeMonitors.forEach(ListenerHandle::stop);
         fontChangeMonitors.clear();
     }
 
