@@ -37,6 +37,18 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
                      * We assume that there is no line which contains both the
                      * substring that marks the beginning of the block and the end of the block.
                      * We also assume there are no nested blocks.
+                     * 
+                     * The output of the dbus-monitor command for accent color is of the form
+                     *  variant     struct {
+                     *          double d
+                     *          double d
+                     *          double d
+                     *      }
+                     * so for these the { and } symbols mark the beginning and end of the block and these assumptions are
+                     * satisfied.
+                     * TODO: Maybe instead of looking for block and and block begin, we should filter for the word
+                     * "double" and the block should be closed off whenever the collector is nonempty but the
+                     * current line fails the filtering.
                      */
                     if (line.contains(lineBeforeBlockContainsThis)) {
                         weAreInBlock = true;
