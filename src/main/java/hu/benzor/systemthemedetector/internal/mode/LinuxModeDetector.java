@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public final class LinuxModeDetector extends ModeDetector {
 
-    private final Pattern cmdOutputPattern = Pattern.compile("\\(<<uint32 (\\d+)>>,\\)");
+    private final Pattern cmdOutputPattern = Pattern.compile("\\(<uint32 (\\d+)>,\\)");
     private final Pattern monitorOutputPattern = Pattern.compile("variant\\s+uint32\\s+(\\d+)");
 
     @Override
@@ -23,7 +23,7 @@ public final class LinuxModeDetector extends ModeDetector {
             "--timeout=1000",
             "--dest=org.freedesktop.portal.Desktop",
             "--object-path=/org/freedesktop/portal/desktop",
-            "--method=org.freedesktop.portal.Settings.Read",
+            "--method=org.freedesktop.portal.Settings.ReadOne",
             "org.freedesktop.appearance",
             "color-scheme"
         );

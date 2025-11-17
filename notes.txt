@@ -16,14 +16,14 @@ Also probably we should not be listening for font changes, this feels a bit too 
 gdbus call --session --timeout=1000 \
              --dest=org.freedesktop.portal.Desktop \
              --object-path /org/freedesktop/portal/desktop \
-             --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme
+             --method org.freedesktop.portal.Settings.ReadOne org.freedesktop.appearance color-scheme
 
 ** Accent color
 
 gdbus call --session --timeout=1000 \
   --dest=org.freedesktop.portal.Desktop \
   --object-path /org/freedesktop/portal/desktop \
-  --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance accent-color
+  --method org.freedesktop.portal.Settings.ReadOne org.freedesktop.appearance accent-color
 
 ** Notes
 
