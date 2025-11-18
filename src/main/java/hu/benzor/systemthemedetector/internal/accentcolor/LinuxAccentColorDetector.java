@@ -38,8 +38,7 @@ public final class LinuxAccentColorDetector implements AccentColorDetector {
         .processBuilder(pb)
         .outputMapper(this::getAccentColorFromListenerOutput)
         .callback(callback)
-        .lineBeforeBlockContainsThis("{")
-        .lineAfterBlockContainsThis("}")
+        .filter("double")
         .build();
         Future<Void> task = executorService.submit(listener);
         return new ListenerHandleImpl<>(Color.class, task);

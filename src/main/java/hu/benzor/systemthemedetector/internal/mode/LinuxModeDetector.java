@@ -32,10 +32,13 @@ public final class LinuxModeDetector implements ModeDetector {
 
     @Override
     public ListenerHandle<Mode> registerCallback(Consumer<Mode> callback) {
-        ProcessBuilder pb = getListenerProcessBuilder();
-        Future<Void> task = executorService.submit(
-            new ProcessOutputLineListener<>(pb, this::getModeFromListenerOutput, callback, "variant")
-        );
+        ProcessOutputLineListener<Mode> listener = ProcessOutputLineListener.<Mode>builder()
+        .processBuilder(getListenerProcessBuilder())
+        .outputMapper(this::getModeFromListenerOutput)
+        .callback(callback)
+        .filter("variant")
+        .build();
+        Future<Void> task = executorService.submit(listener);
         return new ListenerHandleImpl<>(Mode.class, task);
     }
 

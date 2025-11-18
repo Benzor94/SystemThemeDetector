@@ -6,10 +6,12 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Builder
 @RequiredArgsConstructor
 public class ProcessOutputLineListener<T> implements Callable<Void> {
 

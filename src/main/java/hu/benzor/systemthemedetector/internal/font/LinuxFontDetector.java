@@ -30,10 +30,12 @@ public final class LinuxFontDetector implements FontDetector {
 
     @Override
     public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
-        ProcessBuilder pb = getListenerProcessBuilder();
-        Future<Void> task = executorService.submit(
-            new ProcessOutputLineListener<>(pb, this::getFontFromListenerOutput, callback)
-        );
+        ProcessOutputLineListener<Optional<Font>> listener = ProcessOutputLineListener.<Optional<Font>>builder()
+        .processBuilder(getListenerProcessBuilder())
+        .outputMapper(this::getFontFromListenerOutput)
+        .callback(callback)
+        .build();
+        Future<Void> task = executorService.submit(listener);
         return new ListenerHandleImpl<>(Font.class, task);
     }
 

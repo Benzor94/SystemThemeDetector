@@ -20,8 +20,7 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
     private final ProcessBuilder processBuilder;
     private final Function<List<String>, T> outputMapper;
     private final Consumer<T> callback;
-    private final String lineBeforeBlockContainsThis;
-    private final String lineAfterBlockContainsThis;
+    private final String filter;
 
     @Override
     public Void call() {
@@ -33,36 +32,26 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
                 List<String> lineCollector = new ArrayList<>();
                 boolean weAreInBlock = false;
                 while (!Thread.currentThread().isInterrupted() && (line = reader.readLine()) != null) {
-                    /*
-                     * We assume that there is no line which contains both the
-                     * substring that marks the beginning of the block and the end of the block.
-                     * We also assume there are no nested blocks.
-                     * 
+                    /* 
                      * The output of the dbus-monitor command for accent color is of the form
                      *  variant     struct {
                      *          double d
                      *          double d
                      *          double d
                      *      }
-                     * so for these the { and } symbols mark the beginning and end of the block and these assumptions are
-                     * satisfied.
-                     * TODO: Maybe instead of looking for block and and block begin, we should filter for the word
-                     * "double" and the block should be closed off whenever the collector is nonempty but the
-                     * current line fails the filtering.
+                     * but there are also other lines, so we look for blocks of congruent line that
+                     * contain the substring "double".
                      */
-                    if (line.contains(lineBeforeBlockContainsThis)) {
-                        weAreInBlock = true;
-                        continue;
-                    }
-                    if (line.contains(lineAfterBlockContainsThis)) {
-                        weAreInBlock = false;
-                    }
-                    if (weAreInBlock) {
+                    if (line.contains(filter)) {
+                        if (weAreInBlock == false) {
+                            weAreInBlock = true;
+                        }
                         lineCollector.add(line);
-                    } else if (!lineCollector.isEmpty()) {
+                    } else if (weAreInBlock == true) {
                         callback.accept(outputMapper.apply(lineCollector));
                         lineCollector.clear();
-                    }              
+                        weAreInBlock = false;
+                    }             
                 }
             }
         } catch (IOException e) {
