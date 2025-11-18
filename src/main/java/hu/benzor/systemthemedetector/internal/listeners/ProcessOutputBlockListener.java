@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProcessOutputBlockListener<T> implements Callable<Void> {
 
     private final ProcessBuilder processBuilder;
+    private final ProcessWrapper processWrapper;
     private final Function<List<String>, T> outputMapper;
     private final Consumer<T> callback;
     private final String filter;
@@ -27,6 +28,7 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
         Process process = null;
         try {
             process = processBuilder.start();
+            processWrapper.process(process);
             try (BufferedReader reader = process.inputReader()) {
                 String line;
                 List<String> lineCollector = new ArrayList<>();
@@ -59,7 +61,7 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
             log.warn("Something bad happened: {}", e);
 
         } finally {
-            log.info("Process: {}", process);
+            log.info("Shutting down process.");
             if (process != null) {
                 process.destroy();
             }

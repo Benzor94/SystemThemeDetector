@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputLineListener;
+import hu.benzor.systemthemedetector.internal.listeners.ProcessWrapper;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
@@ -32,14 +33,16 @@ public final class LinuxModeDetector implements ModeDetector {
 
     @Override
     public ListenerHandle<Mode> registerCallback(Consumer<Mode> callback) {
+        ProcessWrapper processWrapper = new ProcessWrapper();
         ProcessOutputLineListener<Mode> listener = ProcessOutputLineListener.<Mode>builder()
         .processBuilder(getListenerProcessBuilder())
+        .processWrapper(processWrapper)
         .outputMapper(this::getModeFromListenerOutput)
         .callback(callback)
         .filter("variant")
         .build();
         Future<Void> task = executorService.submit(listener);
-        return new ListenerHandleImpl<>(Mode.class, task);
+        return new ListenerHandleImpl<>(Mode.class, task, processWrapper);
     }
 
     private ProcessBuilder getCommandProcessBuilder() {

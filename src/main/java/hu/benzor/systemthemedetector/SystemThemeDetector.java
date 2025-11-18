@@ -33,6 +33,7 @@ public class SystemThemeDetector {
     private static final List<ListenerHandle<Color>> accentColorChangeListeners = new CopyOnWriteArrayList<>();
 
     static {
+        Runtime.getRuntime().addShutdownHook(new Thread(SystemThemeDetector::onShutdown));
         platform = EnvironmentDetector.getOperatingSystem();
         switch (platform) {
             case UNKNOWN, WINDOWS, MACOS -> {
@@ -93,6 +94,12 @@ public class SystemThemeDetector {
     public static void stopAllFontChangeMonitors() {
         fontChangeListeners.forEach(ListenerHandle::stop);
         fontChangeListeners.clear();
+    }
+
+    private static void onShutdown() {
+        modeChangeListeners.forEach(ListenerHandle::stop);
+        accentColorChangeListeners.forEach(ListenerHandle::stop);
+        fontChangeListeners.forEach(ListenerHandle::stop);
     }
 
 }

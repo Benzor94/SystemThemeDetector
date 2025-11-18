@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.internal.environment.DesktopEnvironment;
 import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputLineListener;
+import hu.benzor.systemthemedetector.internal.listeners.ProcessWrapper;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
@@ -30,13 +31,15 @@ public final class LinuxFontDetector implements FontDetector {
 
     @Override
     public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
+        ProcessWrapper processWrapper = new ProcessWrapper();
         ProcessOutputLineListener<Optional<Font>> listener = ProcessOutputLineListener.<Optional<Font>>builder()
         .processBuilder(getListenerProcessBuilder())
+        .processWrapper(processWrapper)
         .outputMapper(this::getFontFromListenerOutput)
         .callback(callback)
         .build();
         Future<Void> task = executorService.submit(listener);
-        return new ListenerHandleImpl<>(Font.class, task);
+        return new ListenerHandleImpl<>(Font.class, task, processWrapper);
     }
 
     private ProcessBuilder getCommandProcessBuilder() {

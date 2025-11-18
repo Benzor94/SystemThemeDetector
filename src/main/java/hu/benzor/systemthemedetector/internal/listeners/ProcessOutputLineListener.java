@@ -16,23 +16,17 @@ import lombok.extern.slf4j.Slf4j;
 public class ProcessOutputLineListener<T> implements Callable<Void> {
 
     private final ProcessBuilder processBuilder;
+    private final ProcessWrapper processWrapper;
     private final Function<String, T> outputMapper;
     private final Consumer<T> callback;
     private final String filter;
-
-    public ProcessOutputLineListener(
-        ProcessBuilder processBuilder,
-        Function<String, T> outputMapper,
-        Consumer<T> callback
-    ) {
-        this(processBuilder, outputMapper, callback, null);
-    }
 
     @Override
     public Void call() {
         Process process = null;
         try {
             process = processBuilder.start();
+            processWrapper.process(process);
             try (BufferedReader reader = process.inputReader()) {
                 String line;
                 while (!Thread.currentThread().isInterrupted() && (line = reader.readLine()) != null) {
@@ -46,6 +40,7 @@ public class ProcessOutputLineListener<T> implements Callable<Void> {
             log.warn("Something bad happened: {}", e);
 
         } finally {
+            log.info("Shutting down process.");
             if (process != null) {
                 process.destroy();
             }

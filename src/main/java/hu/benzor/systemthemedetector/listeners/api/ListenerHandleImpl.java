@@ -2,6 +2,7 @@ package hu.benzor.systemthemedetector.listeners.api;
 
 import java.util.concurrent.Future;
 
+import hu.benzor.systemthemedetector.internal.listeners.ProcessWrapper;
 import hu.benzor.systemthemedetector.theme.Theme;
 import lombok.RequiredArgsConstructor;
 
@@ -10,6 +11,7 @@ public class ListenerHandleImpl<T extends Theme> implements ListenerHandle<T> {
 
     private final Class<T> type;
     private final Future<Void> task;
+    private final ProcessWrapper processWrapper;
 
     @Override
     public boolean isActive() {        
@@ -18,6 +20,10 @@ public class ListenerHandleImpl<T extends Theme> implements ListenerHandle<T> {
     @Override
     public void stop() {
         task.cancel(true);
+        Process process = processWrapper.process();
+        if (process != null) {
+            process.destroy();
+        }
         
     }
     @Override
