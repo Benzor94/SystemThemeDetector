@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputBlockListener;
+import hu.benzor.systemthemedetector.internal.listeners.ProcessWrapper;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
@@ -33,15 +34,16 @@ public final class LinuxAccentColorDetector implements AccentColorDetector {
 
     @Override
     public ListenerHandle<Color> registerCallback(Consumer<Optional<Color>> callback) {
-        ProcessBuilder pb = getListenerProcessBuilder();
+        ProcessWrapper processWrapper = new ProcessWrapper();
         ProcessOutputBlockListener<Optional<Color>> listener = ProcessOutputBlockListener.<Optional<Color>>builder()
-        .processBuilder(pb)
+        .processBuilder(getListenerProcessBuilder())
+        .processWrapper(processWrapper)
         .outputMapper(this::getAccentColorFromListenerOutput)
         .callback(callback)
         .filter("double")
         .build();
         Future<Void> task = executorService.submit(listener);
-        return new ListenerHandleImpl<>(Color.class, task);
+        return new ListenerHandleImpl<>(Color.class, task, processWrapper);
     }
 
     protected ProcessBuilder getCommandProcessBuilder() {
