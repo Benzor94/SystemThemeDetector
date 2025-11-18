@@ -29,3 +29,6 @@ gdbus call --session --timeout=1000 \
 
 * Detectors should probably be interfaces again, since it is likely that the various methods to parse output
   will differ greatly between the platforms
+
+* dbus monitors are not being shutdown, it seems like because the thread is sitting in readLine(),
+  it won't get to any part where the process is shut down. This needs to be fixed.

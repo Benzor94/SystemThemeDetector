@@ -70,6 +70,7 @@ public class ProcessOutputBlockListener<T> implements Callable<Void> {
             log.warn("Something bad happened: {}", e);
 
         } finally {
+            log.info("Process: {}", process);
             if (process != null) {
                 process.destroy();
             }

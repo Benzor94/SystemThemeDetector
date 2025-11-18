@@ -84,6 +84,7 @@ public final class LinuxAccentColorDetector implements AccentColorDetector {
         }
         if (matcher.groupCount() != 3) {
             log.warn("Invalid tuple in the color string. The tuple's size must be 3, it was {}.", matcher.groupCount());
+            return Optional.empty();
         }
         try {
             int[] rgbColors = IntStream.of(1, 2, 3)
