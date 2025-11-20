@@ -14,6 +14,7 @@ import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
 import hu.benzor.systemthemedetector.internal.mode.LinuxModeDetector;
 import hu.benzor.systemthemedetector.internal.mode.ModeDetector;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
+import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
@@ -30,7 +31,7 @@ public class SystemThemeDetector {
     private static final AccentColorDetector accentColorDetector;
     private static final List<ListenerHandle<Font>> fontChangeListeners = new CopyOnWriteArrayList<>();
     private static final List<ListenerHandle<Mode>> modeChangeListeners = new CopyOnWriteArrayList<>();
-    private static final List<ListenerHandle<Color>> accentColorChangeListeners = new CopyOnWriteArrayList<>();
+    private static final List<ListenerHandle<AccentColor>> accentColorChangeListeners = new CopyOnWriteArrayList<>();
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(SystemThemeDetector::onShutdown));
@@ -55,11 +56,11 @@ public class SystemThemeDetector {
         return modeDetector.getSystemMode();
     }
 
-    public static Optional<Color> getCurrentAccentColor() {
+    public static AccentColor getCurrentAccentColor() {
         return accentColorDetector.getSystemAccentColor();
     }
 
-    public static Optional<Font> getCurrentFont() {
+    public static Font getCurrentFont() {
         return fontDetector.getSystemFont();
     }
 
@@ -69,13 +70,13 @@ public class SystemThemeDetector {
         return handle;
     }
 
-    public static ListenerHandle<Color> onAccentColorChange(Consumer<Optional<Color>> callback) {
+    public static ListenerHandle<AccentColor> onAccentColorChange(Consumer<AccentColor> callback) {
         var handle = accentColorDetector.registerCallback(callback);
         accentColorChangeListeners.add(handle);
         return handle;
     }
 
-    public static ListenerHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
+    public static ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
         var handle = fontDetector.registerCallback(callback);
         fontChangeListeners.add(handle);        
         return handle;
