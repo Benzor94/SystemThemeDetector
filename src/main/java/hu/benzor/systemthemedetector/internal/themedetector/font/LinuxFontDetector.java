@@ -1,48 +1,22 @@
-package hu.benzor.systemthemedetector.internal.font;
+package hu.benzor.systemthemedetector.internal.themedetector.font;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.internal.environment.DesktopEnvironment;
-import hu.benzor.systemthemedetector.internal.listeners.ProcessOutputLineListener;
-import hu.benzor.systemthemedetector.internal.listeners.ProcessWrapper;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
-import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
-import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class LinuxFontDetector implements FontDetector {
+public final class LinuxFontDetector extends FontDetector {
 
     private final DesktopEnvironment desktop;
-    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
-    public Optional<Font> getSystemFont() {
-        return ProcessUtils.getOutputLineFromProcess(getCommandProcessBuilder()).flatMap(this::getFontFromCommandOutput);
-    };
-
-    @Override
-    public ListenerHandle<Font> registerCallback(Consumer<Optional<Font>> callback) {
-        ProcessWrapper processWrapper = new ProcessWrapper();
-        ProcessOutputLineListener<Optional<Font>> listener = ProcessOutputLineListener.<Optional<Font>>builder()
-        .processBuilder(getListenerProcessBuilder())
-        .processWrapper(processWrapper)
-        .outputMapper(this::getFontFromListenerOutput)
-        .callback(callback)
-        .build();
-        Future<Void> task = executorService.submit(listener);
-        return new ListenerHandleImpl<>(Font.class, task, processWrapper);
-    }
-
-    private ProcessBuilder getCommandProcessBuilder() {
+    protected ProcessBuilder getProcessBuilder() {
         ProcessBuilder pb = new ProcessBuilder(
             "gsettings",
             "get",
@@ -52,17 +26,8 @@ public final class LinuxFontDetector implements FontDetector {
        return pb;
     }
 
-    private ProcessBuilder getListenerProcessBuilder() {
-        ProcessBuilder pb = new ProcessBuilder(
-            "gsettings",
-            "monitor",
-            getDconfInterfaceSchema(),
-            "font-name"
-        );
-        return pb;
-    }
-
-    protected Optional<Font> getFontFromCommandOutput(String output) {
+    @Override
+    protected Optional<Font> getThemeFromProcessOutput(String output) {
         /*
          * We expect font strings of the scheme "'Noto Sans 10'"" or "'Noto Sans, 10'"" (with the single quotes).
          * It seems that if the font is set from KDE, then the name might be separated from the number by a comma
@@ -97,17 +62,9 @@ public final class LinuxFontDetector implements FontDetector {
         return Optional.of(new Font(fontName, fontSize));
     }
 
-    protected Optional<Font> getFontFromListenerOutput(String output) {
-        /*
-         * Here we expect the output string to look like "font-name: 'Noto Sans 10'"
-         * or "font-name: 'Noto Sans, 10'".
-         */
-        if (output == null || !output.startsWith("font-name:")) {
-            log.warn("Invalid font string received: {}", output);
-            return Optional.empty();
-        }
-        String truncatedOutput = output.substring(10, output.length()).trim();
-        return getFontFromCommandOutput(truncatedOutput);
+    @Override
+    protected Optional<String> parseProcessOutput(ProcessBuilder processBuilder) {
+        return ProcessUtils.getOutputLineFromProcess(processBuilder);
     }
 
     private String getDconfInterfaceSchema() {

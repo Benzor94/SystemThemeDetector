@@ -1,12 +1,13 @@
 package hu.benzor.systemthemedetector.theme;
 
+import java.util.Optional;
+
 import lombok.Getter;
 
-public sealed interface Theme permits Theme.Mode, Theme.Color, Theme.Font {
+public sealed interface Theme permits Theme.Mode, Theme.AccentColor, Theme.Font {
 
     @Getter
     public enum Mode implements Theme {
-        APP_DEFAULT(0),
         DARK(1),
         LIGHT(2);
 
@@ -16,33 +17,33 @@ public sealed interface Theme permits Theme.Mode, Theme.Color, Theme.Font {
             this.id = id;
         }
 
-        public static Mode fromId(int id) {
+        public static Optional<Mode> fromId(int id) {
             return switch (id) {
-                case 1 -> DARK;
-                case 2 -> LIGHT;
-                default -> APP_DEFAULT;
+                case 1 -> Optional.of(DARK);
+                case 2 -> Optional.of(LIGHT);
+                default -> Optional.empty();
             };
         }
     }
 
-    public record Color(int red, int green, int blue) implements Theme {
+    public record AccentColor(int red, int green, int blue) implements Theme {
 
-        public Color {
-            validateInput(red);
-            validateInput(green);
-            validateInput(blue);
+        public AccentColor {
+            verifyColorNumber(red);
+            verifyColorNumber(green);
+            verifyColorNumber(blue);
         }
 
-        public static Color fromArray(int[] rgbNumbers) {
+        public static AccentColor fromArray(int[] rgbNumbers) {
             if (rgbNumbers.length != 3) {
-                throw new IllegalArgumentException("Input array's length must be 3.");
+                throw new IllegalArgumentException("Color array must have length 3.");
             }
-            return new Color(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2]);
+            return new AccentColor(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2]);
         }
 
-        private void validateInput(int input) {
+        private static void verifyColorNumber(int input) {
             if (input < 0 || input > 255) {
-                throw new IllegalArgumentException("Color must be between 0 and 255.");
+                throw new IllegalArgumentException("Color number must be between 0 and 255.");
             }
         }
     }

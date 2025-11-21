@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import hu.benzor.systemthemedetector.theme.Theme.Color;
+import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 
@@ -29,20 +29,22 @@ public class SystemThemeDetectorTest {
     @Test
     void testGetCurrentMode() {
 
-        Mode mode = SystemThemeDetector.getCurrentMode();
-        assertEquals(Mode.DARK, mode);
+        Optional<Mode> mode = SystemThemeDetector.getCurrentMode();
+        assertTrue(mode.isPresent());
+        Mode actualMode = mode.get();
+        assertEquals(Mode.DARK, actualMode);
 
     }
 
     @Test
     void testGetCurrentAccentColor() {
 
-        Optional<Color> color = SystemThemeDetector.getCurrentAccentColor();
+        Optional<AccentColor> color = SystemThemeDetector.getCurrentAccentColor();
         assertTrue(color.isPresent());
-        Color actualColor = color.get();
-        if (actualColor instanceof Color(int r, int g, int b)) {
-            assertEquals(79, r);
-            assertEquals(90, g);
+        AccentColor actualColor = color.get();
+        if (actualColor instanceof AccentColor(int r, int g, int b)) {
+            assertEquals(80, r);
+            assertEquals(91, g);
             assertEquals(49, b);
         } else {
             assertFalse(true);
@@ -86,7 +88,7 @@ public class SystemThemeDetectorTest {
                 if (optColor.isEmpty()) {
                     System.out.println("Accent color was changed but could not be determined");
                 } else {
-                    Color color = optColor.get();
+                    AccentColor color = optColor.get();
                     System.out.println("Accent color was changed to " + color + ".");
                 }
             }
