@@ -1,20 +1,13 @@
 package hu.benzor.systemthemedetector.theme;
 
+import java.util.Optional;
+
 import lombok.Getter;
 
 public sealed interface Theme permits Theme.Mode, Theme.AccentColor, Theme.Font {
 
-    default Theme getAbsent() {
-        return switch(this) {
-            case Font f -> new Font.Absent();
-            case AccentColor c -> new AccentColor.Absent();
-            case Mode m -> Mode.APP_DEFAULT;
-        };
-    }
-
     @Getter
     public enum Mode implements Theme {
-        APP_DEFAULT(0),
         DARK(1),
         LIGHT(2);
 
@@ -24,49 +17,37 @@ public sealed interface Theme permits Theme.Mode, Theme.AccentColor, Theme.Font 
             this.id = id;
         }
 
-        public static Mode fromId(int id) {
+        public static Optional<Mode> fromId(int id) {
             return switch (id) {
-                case 1 -> DARK;
-                case 2 -> LIGHT;
-                default -> APP_DEFAULT;
+                case 1 -> Optional.of(DARK);
+                case 2 -> Optional.of(LIGHT);
+                default -> Optional.empty();
             };
         }
     }
 
-    public sealed interface AccentColor extends Theme permits AccentColor.Present, AccentColor.Absent {
+    public record AccentColor(int red, int green, int blue) implements Theme {
 
-        public record Present(int red, int green, int blue) implements AccentColor {
-
-            public Present {
-                verifyInput(red);
-                verifyInput(green);
-                verifyInput(blue);
-            }
-
-            public static Present fromArray(int[] rgbNumbers) {
-                if (rgbNumbers.length != 3) {
-                    throw new IllegalArgumentException("Length of the input array must be 3.");
-                }
-                return new Present(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2]);
-            }
-
-            private static void verifyInput(int input) {
-                if (input < 0 || input > 255) {
-                    throw new IllegalArgumentException("Color value must be between 0 and 255.");
-                }
-            }
+        public AccentColor {
+            verifyColorNumber(red);
+            verifyColorNumber(green);
+            verifyColorNumber(blue);
         }
 
-        public record Absent() implements AccentColor {}
+        public static AccentColor fromArray(int[] rgbNumbers) {
+            if (rgbNumbers.length != 3) {
+                throw new IllegalArgumentException("Color array must have length 3.");
+            }
+            return new AccentColor(rgbNumbers[0], rgbNumbers[1], rgbNumbers[2]);
+        }
 
+        private static void verifyColorNumber(int input) {
+            if (input < 0 || input > 255) {
+                throw new IllegalArgumentException("Color number must be between 0 and 255.");
+            }
+        }
     }
 
-    public sealed interface Font extends Theme permits Font.Present, Font.Absent {
-
-        public record Present(String name, String size) implements Font {}
-
-        public record Absent() implements Font {}
-
-    }
+    public record Font(String name, String size) implements Theme {}
 
 }

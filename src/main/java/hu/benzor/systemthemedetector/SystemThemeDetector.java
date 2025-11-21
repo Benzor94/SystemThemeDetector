@@ -5,17 +5,25 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import hu.benzor.systemthemedetector.internal.accentcolor.AccentColorDetector;
-import hu.benzor.systemthemedetector.internal.accentcolor.LinuxAccentColorDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.AccentColorDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.FallbackAccentColorDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.LinuxAccentColorDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.MacOsAccentColorDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.WindowsAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.internal.environment.Platform;
-import hu.benzor.systemthemedetector.internal.font.FontDetector;
-import hu.benzor.systemthemedetector.internal.font.LinuxFontDetector;
-import hu.benzor.systemthemedetector.internal.mode.LinuxModeDetector;
-import hu.benzor.systemthemedetector.internal.mode.ModeDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.font.FallbackFontDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.font.FontDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.font.LinuxFontDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.font.MacOsFontDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.font.WindowsFontDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.mode.FallbackModeDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.mode.LinuxModeDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.mode.MacOsModeDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.mode.ModeDetector;
+import hu.benzor.systemthemedetector.internal.themedetector.mode.WindowsModeDetector;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
-import hu.benzor.systemthemedetector.theme.Theme.Color;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.AccessLevel;
@@ -37,46 +45,55 @@ public class SystemThemeDetector {
         Runtime.getRuntime().addShutdownHook(new Thread(SystemThemeDetector::onShutdown));
         platform = EnvironmentDetector.getOperatingSystem();
         switch (platform) {
-            case UNKNOWN, WINDOWS, MACOS -> {
-                fontDetector = new LinuxFontDetector(null);
-                modeDetector = new LinuxModeDetector();
-                accentColorDetector = new LinuxAccentColorDetector();
-            }
             case LINUX -> {
                 fontDetector = new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
                 modeDetector = new LinuxModeDetector();
                 accentColorDetector = new LinuxAccentColorDetector();
             }
-            default -> throw new IllegalStateException();
+            case WINDOWS -> {
+                fontDetector = new WindowsFontDetector();
+                modeDetector = new WindowsModeDetector();
+                accentColorDetector = new WindowsAccentColorDetector();
+            }
+            case MACOS -> {
+                fontDetector = new MacOsFontDetector();
+                modeDetector = new MacOsModeDetector();
+                accentColorDetector = new MacOsAccentColorDetector();
+            }
+            default -> {
+                fontDetector = new FallbackFontDetector();
+                modeDetector = new FallbackModeDetector();
+                accentColorDetector = new FallbackAccentColorDetector();
+            }
         };
     }
 
 
-    public static Mode getCurrentMode() {
-        return modeDetector.getSystemMode();
+    public static Optional<Mode> getCurrentMode() {
+        return modeDetector.getCurrentTheme();
     }
 
-    public static AccentColor getCurrentAccentColor() {
-        return accentColorDetector.getSystemAccentColor();
+    public static Optional<AccentColor> getCurrentAccentColor() {
+        return accentColorDetector.getCurrentTheme();
     }
 
-    public static Font getCurrentFont() {
-        return fontDetector.getSystemFont();
+    public static Optional<Font> getCurrentFont() {
+        return fontDetector.getCurrentTheme();
     }
 
-    public static ListenerHandle<Mode> onModeChange(Consumer<Mode> callback) {
+    public static ListenerHandle<Mode> onModeChange(Consumer<Optional<Mode>> callback) {
         var handle = modeDetector.registerCallback(callback);
         modeChangeListeners.add(handle);
         return handle;
     }
 
-    public static ListenerHandle<AccentColor> onAccentColorChange(Consumer<AccentColor> callback) {
+    public static ListenerHandle<AccentColor> onAccentColorChange(Consumer<Optional<AccentColor>> callback) {
         var handle = accentColorDetector.registerCallback(callback);
         accentColorChangeListeners.add(handle);
         return handle;
     }
 
-    public static ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
+    public static ListenerHandle<Font> onFontChange(Consumer<Optional<Font>> callback) {
         var handle = fontDetector.registerCallback(callback);
         fontChangeListeners.add(handle);        
         return handle;

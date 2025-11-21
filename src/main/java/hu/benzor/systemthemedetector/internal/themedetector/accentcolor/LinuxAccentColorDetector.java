@@ -1,10 +1,10 @@
-package hu.benzor.systemthemedetector.internal.themedetector.font;
+package hu.benzor.systemthemedetector.internal.themedetector.accentcolor;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.theme.Theme.Font;
+import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 
-public final class MacOsFontDetector extends FontDetector {
+public final class LinuxAccentColorDetector extends AccentColorDetector {
 
     @Override
     protected ProcessBuilder getProcessBuilder() {
@@ -13,7 +13,7 @@ public final class MacOsFontDetector extends FontDetector {
     }
 
     @Override
-    protected Optional<Font> getThemeFromProcessOutput(String output) {
+    protected Optional<AccentColor> getThemeFromProcessOutput(String output) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getThemeFromProcessOutput'");
     }

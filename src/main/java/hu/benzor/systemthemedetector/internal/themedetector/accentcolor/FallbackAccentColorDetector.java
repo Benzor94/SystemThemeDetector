@@ -1,10 +1,10 @@
-package hu.benzor.systemthemedetector.internal.themedetector.font;
+package hu.benzor.systemthemedetector.internal.themedetector.accentcolor;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.theme.Theme.Font;
+import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 
-public final class FallbackFontDetector extends FontDetector {
+public final class FallbackAccentColorDetector extends AccentColorDetector {
 
     @Override
     protected ProcessBuilder getProcessBuilder() {
@@ -12,7 +12,7 @@ public final class FallbackFontDetector extends FontDetector {
     }
 
     @Override
-    protected Optional<Font> getThemeFromProcessOutput(String output) {
+    protected Optional<AccentColor> getThemeFromProcessOutput(String output) {
         return Optional.empty();
     }
 

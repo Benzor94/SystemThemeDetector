@@ -8,6 +8,4 @@ public interface ListenerHandle<T extends Theme> {
 
     void stop();
 
-    Class<T> type();
-
 }

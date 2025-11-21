@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ListenerHandleImpl<T extends Theme> implements ListenerHandle<T> {
 
-    private final Class<T> type;
     private final ScheduledFuture<?> task;
 
     @Override
@@ -19,11 +18,6 @@ public class ListenerHandleImpl<T extends Theme> implements ListenerHandle<T> {
     @Override
     public void stop() {
         task.cancel(true);        
-    }
-
-    @Override
-    public Class<T> type() {
-        return type;
     }
 
 }

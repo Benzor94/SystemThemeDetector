@@ -20,7 +20,7 @@ public class ProcessUtils {
                 return reader.lines().filter(s -> s.contains(filter)).findFirst();
             }
 
-        } catch (IOException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             return Optional.empty();
         }
     }
