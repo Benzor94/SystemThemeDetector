@@ -11,13 +11,13 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
     private final Supplier<Optional<T>> themeSupplier;
     private final Consumer<Optional<T>> callback;
 
-    private final Optional<T> initialTheme;
+    private Optional<T> previousTheme;
 
     public ThemeChangeListener(Supplier<Optional<T>> themeSupplier, Consumer<Optional<T>> callback) {
         this.themeSupplier = themeSupplier;
         this.callback = callback;
-        initialTheme = themeSupplier.get();
-        if (initialTheme == null) {
+        previousTheme = themeSupplier.get();
+        if (previousTheme == null) {
             throw new NullPointerException("The initial theme cannot be null.");
         }
     }
@@ -25,8 +25,10 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
     @Override
     public void run() {
         Optional<T> currentTheme = themeSupplier.get();
-        if (!initialTheme.equals(currentTheme)) {
+        if (!previousTheme.equals(currentTheme)) {
+            previousTheme = currentTheme;
             callback.accept(currentTheme);
+
         }
     }
 
