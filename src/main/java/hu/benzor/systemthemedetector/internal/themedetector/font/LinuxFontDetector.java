@@ -3,7 +3,7 @@ package hu.benzor.systemthemedetector.internal.themedetector.font;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import hu.benzor.systemthemedetector.internal.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.environment.api.DesktopEnvironment;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.theme.Theme.Font;
 import lombok.RequiredArgsConstructor;

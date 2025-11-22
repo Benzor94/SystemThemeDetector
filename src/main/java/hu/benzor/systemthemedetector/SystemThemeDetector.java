@@ -10,8 +10,9 @@ import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.Fallback
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.LinuxAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.MacOsAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.WindowsAccentColorDetector;
+import hu.benzor.systemthemedetector.environment.api.DesktopEnvironment;
+import hu.benzor.systemthemedetector.environment.api.Platform;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
-import hu.benzor.systemthemedetector.internal.environment.Platform;
 import hu.benzor.systemthemedetector.internal.themedetector.font.FallbackFontDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.font.FontDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.font.LinuxFontDetector;
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
 public class SystemThemeDetector {
 
     private static final Platform platform;
+    private static final DesktopEnvironment desktop;
 
     private static final FontDetector fontDetector;
     private static final ModeDetector modeDetector;
@@ -44,9 +46,10 @@ public class SystemThemeDetector {
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(SystemThemeDetector::onShutdown));
         platform = EnvironmentDetector.getOperatingSystem();
+        desktop = platform == Platform.LINUX ? EnvironmentDetector.getDesktopEnvironment() : DesktopEnvironment.UNKNOWN;
         switch (platform) {
             case LINUX -> {
-                fontDetector = new LinuxFontDetector(EnvironmentDetector.getDesktopEnvironment());
+                fontDetector = new LinuxFontDetector(desktop);
                 modeDetector = new LinuxModeDetector();
                 accentColorDetector = new LinuxAccentColorDetector();
             }
@@ -66,6 +69,14 @@ public class SystemThemeDetector {
                 accentColorDetector = new FallbackAccentColorDetector();
             }
         };
+    }
+
+    public static Platform getPlatform() {
+        return platform;
+    }
+
+    public static DesktopEnvironment getDesktopEnvironment() {
+        return desktop;
     }
 
 

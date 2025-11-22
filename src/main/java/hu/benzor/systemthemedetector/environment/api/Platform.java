@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.internal.environment;
+package hu.benzor.systemthemedetector.environment.api;
 
 public enum Platform {
 
