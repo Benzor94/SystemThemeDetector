@@ -38,25 +38,25 @@ public final class LinuxModeDetector extends ModeDetector {
          * and we want to extract this integer.
          */
         if (output == null) {
-            log.warn("Null mode string received.");
+            log.debug("Null mode string received.");
             return Optional.empty();
         }
         Matcher matcher = cmdOutputPattern.matcher(output);
         if (!matcher.matches()) {
-            log.warn("Invalid mode string received: {}.", output);
+            log.debug("Invalid mode string received: {}.", output);
             return Optional.empty();
         }
         String modeString = matcher.group(1);
         try {
             int modeNumber = Integer.parseInt(modeString);
             if (modeNumber < 0 || modeNumber > 2) {
-                log.warn("Unrecognited mode number {}.", modeNumber);
+                log.debug("Unrecognited mode number {}.", modeNumber);
             }
             Optional<Mode> mode = Mode.fromId(modeNumber);
-            log.info("Mode determined: {}", mode);
+            log.debug("Mode determined: {}", mode);
             return mode;
         } catch (NumberFormatException e) {
-            log.warn("Invalid mode string received: {}.", output);
+            log.debug("Invalid mode string received: {}.", output);
             return Optional.empty();
         }
     }

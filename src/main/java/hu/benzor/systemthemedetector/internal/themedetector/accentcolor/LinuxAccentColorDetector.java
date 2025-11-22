@@ -39,16 +39,16 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
          * and we construct the color from these.
          */
         if (output == null) {
-            log.warn("Null accent color string received.");
+            log.debug("Null accent color string received.");
             return Optional.empty();
         }
         Matcher matcher = cmdOutputPattern.matcher(output);
         if (!matcher.matches()) {
-            log.warn("Invalid accent color string received: {}.", output);
+            log.debug("Invalid accent color string received: {}.", output);
             return Optional.empty();
         }
         if (matcher.groupCount() != 3) {
-            log.warn("Invalid tuple in the color string. The tuple's size must be 3, it was {}.", matcher.groupCount());
+            log.debug("Invalid tuple in the color string. The tuple's size must be 3, it was {}.", matcher.groupCount());
             return Optional.empty();
         }
         try {
@@ -58,10 +58,10 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
             .mapToInt(this::srgbToRgb)
             .toArray();
             AccentColor color = AccentColor.fromArray(rgbColors);
-            log.info("Accent color determined: {}", color);
+            log.debug("Accent color determined: {}", color);
             return Optional.of(color);
         } catch (IllegalArgumentException e) {
-            log.warn("Members in the color string tuple are invalid: {}", output);
+            log.debug("Members in the color string tuple are invalid: {}", output);
             return Optional.empty();
         }
     }

@@ -13,7 +13,9 @@ import hu.benzor.systemthemedetector.internal.themedetector.mode.ModeDetector;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
 import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
 import hu.benzor.systemthemedetector.theme.Theme;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract sealed class ThemeDetector<T extends Theme>
     permits FontDetector, AccentColorDetector, ModeDetector {
     
@@ -21,7 +23,9 @@ public abstract sealed class ThemeDetector<T extends Theme>
         parseProcessOutput(getProcessBuilder()).flatMap(this::getThemeFromProcessOutput);
     
     public Optional<T> getCurrentTheme() {
-        return themSupplier.get();
+        Optional<T> theme = themSupplier.get();
+        log.info("Current theme is: {}.", theme);
+        return theme;
     }
 
     public ListenerHandle<T> registerCallback(Consumer<Optional<T>> callback) {

@@ -32,15 +32,15 @@ public final class LinuxFontDetector extends FontDetector {
          * We expect font strings of the scheme "'Noto Sans 10'"" or "'Noto Sans, 10'"" (with the single quotes).
          * It seems that if the font is set from KDE, then the name might be separated from the number by a comma
          */
-        log.info("Raw font string: {}", output);
+        log.debug("Raw font string: {}", output);
         if (output == null || output.length() < 5) {
             // We allow a font like "'A 3'", whose length is 5. Any shorter than this should be invalid.
-            log.warn("Invalid font string received: {}", output);
+            log.debug("Invalid font string received: {}", output);
             return Optional.empty();
         }
         if (!output.startsWith("'") || !output.endsWith("'")) {
             // The dconf key contains the font encased in single quotes, so if this condition is not met, something is wrong.
-            log.warn("Invalid font string received: {}", output);
+            log.debug("Invalid font string received: {}", output);
             return Optional.empty();
         }
         output = output.substring(1, output.length() - 1); // Cut off the single quotes.
@@ -58,7 +58,7 @@ public final class LinuxFontDetector extends FontDetector {
         }
         String fontName = fontString.substring(0, indexOfFirstNumber).trim();
         String fontSize = fontString.substring(indexOfFirstNumber, fontString.length());
-        log.info("Font name and size detected: {}, {}", fontName, fontSize);
+        log.debug("Font name and size detected: {}, {}", fontName, fontSize);
         return Optional.of(new Font(fontName, fontSize));
     }
 
