@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
+import lombok.extern.slf4j.Slf4j;
 
 public final class WindowsModeDetector extends ModeDetector {
 
@@ -33,8 +34,12 @@ public final class WindowsModeDetector extends ModeDetector {
         }
         String modeId = parts[1].trim();
         try {
-            Optional<Mode> mode = Mode.fromId(modeId.charAt(modeId.length() - 1));
-            return mode;
+            int modeNumber = Integer.parseInt(modeId.substring(modeId.length() - 1));
+            return switch (modeNumber) {
+                case 0 -> Optional.of(Mode.DARK);
+                case 1 -> Optional.of(Mode.LIGHT);
+                default -> Optional.empty();
+            };
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
