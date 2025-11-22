@@ -21,9 +21,6 @@ public class SystemThemeDetectorTest {
         String fontSize = actualFont.size();
         System.out.println("Font name: " + fontName);
         System.out.println("Font size: " + fontSize);
-        //assertEquals("Ubuntu", fontName);
-        //assertEquals("10", fontSize);
-
     }
 
     @Test
@@ -33,8 +30,6 @@ public class SystemThemeDetectorTest {
         assertTrue(mode.isPresent());
         Mode actualMode = mode.get();
         System.out.println("Mode: " + actualMode);
-        //assertEquals(Mode.DARK, actualMode);
-
     }
 
     @Test
@@ -43,13 +38,7 @@ public class SystemThemeDetectorTest {
         Optional<AccentColor> color = SystemThemeDetector.getCurrentAccentColor();
         assertTrue(color.isPresent());
         AccentColor actualColor = color.get();
-        int r = actualColor.red();
-        int g = actualColor.green();
-        int b = actualColor.blue();
         System.out.println("Accent color: " + actualColor);
-//        assertEquals(80, r);
-//        assertEquals(91, g);
-//        assertEquals(49, b);
     }
 
     @Test

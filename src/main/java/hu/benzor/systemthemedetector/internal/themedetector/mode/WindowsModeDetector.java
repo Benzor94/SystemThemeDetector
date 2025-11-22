@@ -6,6 +6,7 @@ import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class WindowsModeDetector extends ModeDetector {
 
     @Override
@@ -25,11 +26,14 @@ public final class WindowsModeDetector extends ModeDetector {
          * Output is of the form
          *   AppsUseLightTheme    REG_DWORD    0x1
          */
+        log.debug("Raw mode string is: {}.", output);
         if (output == null) {
+            log.debug("Null mode string received.");
             return Optional.empty();
         }
         String[] parts = output.split("REG_DWORD");
         if (parts.length != 2) {
+            log.debug("Split mode string must have length 2.");
             return Optional.empty();
         }
         String modeId = parts[1].trim();
@@ -41,6 +45,7 @@ public final class WindowsModeDetector extends ModeDetector {
                 default -> Optional.empty();
             };
         } catch (IllegalArgumentException e) {
+            log.debug("Processed mode string was invalid: {}, {}.", e.getMessage(), modeId);
             return Optional.empty();
         }
     }
