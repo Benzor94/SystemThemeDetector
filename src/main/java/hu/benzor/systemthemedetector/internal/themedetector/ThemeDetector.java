@@ -3,7 +3,6 @@ package hu.benzor.systemthemedetector.internal.themedetector;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import hu.benzor.systemthemedetector.internal.listeners.Scheduler;
 import hu.benzor.systemthemedetector.internal.listeners.ThemeChangeListener;
