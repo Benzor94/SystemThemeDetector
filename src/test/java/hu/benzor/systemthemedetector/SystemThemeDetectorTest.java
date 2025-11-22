@@ -2,6 +2,7 @@ package hu.benzor.systemthemedetector;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
@@ -11,7 +12,9 @@ import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SystemThemeDetectorTest {
+    
     @Test
+    @Tag("manual")
     void testGetCurrentFont() {
 
         Optional<Font> font = SystemThemeDetector.getCurrentFont();
@@ -24,6 +27,7 @@ public class SystemThemeDetectorTest {
     }
 
     @Test
+    @Tag("manual")
     void testGetCurrentMode() {
 
         Optional<Mode> mode = SystemThemeDetector.getCurrentMode();
@@ -33,6 +37,7 @@ public class SystemThemeDetectorTest {
     }
 
     @Test
+    @Tag("manual")
     void testGetCurrentAccentColor() {
 
         Optional<AccentColor> color = SystemThemeDetector.getCurrentAccentColor();
@@ -42,6 +47,7 @@ public class SystemThemeDetectorTest {
     }
 
     @Test
+    @Tag("manual")
     void testOnFontChange() throws InterruptedException {
 
         var handle = SystemThemeDetector.onFontChange(optFont -> {
@@ -59,6 +65,7 @@ public class SystemThemeDetectorTest {
     }
 
     @Test
+    @Tag("manual")
     void testOnModeChange() throws InterruptedException {
 
         var handle = SystemThemeDetector.onModeChange(
@@ -72,6 +79,7 @@ public class SystemThemeDetectorTest {
     }
 
     @Test
+    @Tag("manual")
     void testOnAccentColorChange() throws InterruptedException {
         var handle = SystemThemeDetector.onAccentColorChange(
             optColor -> {
