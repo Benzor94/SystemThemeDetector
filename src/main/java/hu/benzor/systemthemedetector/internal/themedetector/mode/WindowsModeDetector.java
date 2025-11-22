@@ -2,26 +2,47 @@ package hu.benzor.systemthemedetector.internal.themedetector.mode;
 
 import java.util.Optional;
 
+import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
 import hu.benzor.systemthemedetector.theme.Theme.Mode;
 
 public final class WindowsModeDetector extends ModeDetector {
 
     @Override
     protected ProcessBuilder getProcessBuilder() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProcessBuilder'");
+        return new ProcessBuilder(
+            "reg",
+            "query",
+            "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+            "/v",
+            "AppsUseLightTheme"
+        );
     }
 
     @Override
     protected Optional<Mode> getThemeFromProcessOutput(String output) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getThemeFromProcessOutput'");
+        /*
+         * Output is of the form
+         *   AppsUseLightTheme    REG_DWORD    0x1
+         */
+        if (output == null) {
+            return Optional.empty();
+        }
+        String[] parts = output.split("REG_DWORD");
+        if (parts.length != 2) {
+            return Optional.empty();
+        }
+        String modeId = parts[1].trim();
+        try {
+            Optional<Mode> mode = Mode.fromId(modeId.charAt(modeId.length() - 1));
+            return mode;
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     protected Optional<String> parseProcessOutput(ProcessBuilder processBuilder) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'parseProcessOutput'");
+        return ProcessUtils.getOutputLineFromProcess(processBuilder, "AppsUseLightTheme");
     }
 
 }
