@@ -19,17 +19,15 @@ import lombok.extern.slf4j.Slf4j;
 public abstract sealed class ThemeDetector<T extends Theme>
     permits FontDetector, AccentColorDetector, ModeDetector {
     
-    private final Supplier<Optional<T>> themSupplier = () -> 
-        parseProcessOutput(getProcessBuilder()).flatMap(this::getThemeFromProcessOutput);
     
     public Optional<T> getCurrentTheme() {
-        Optional<T> theme = themSupplier.get();
+        Optional<T> theme = getTheme();
         log.info("Current theme is: {}.", theme);
         return theme;
     }
 
     public ListenerHandle<T> registerCallback(Consumer<Optional<T>> callback) {
-        ThemeChangeListener<T> listener = new ThemeChangeListener<>(themSupplier, callback);
+        ThemeChangeListener<T> listener = new ThemeChangeListener<>(this::getTheme, callback);
         ScheduledFuture<?> task = Scheduler.schedule(listener);
         return new ListenerHandleImpl<>(task);
     }
@@ -39,5 +37,9 @@ public abstract sealed class ThemeDetector<T extends Theme>
     protected abstract Optional<T> getThemeFromProcessOutput(String output);
 
     protected abstract Optional<String> parseProcessOutput(ProcessBuilder processBuilder);
+
+    private Optional<T> getTheme() {
+        return parseProcessOutput(getProcessBuilder()).flatMap(this::getThemeFromProcessOutput);
+    }
 
 }

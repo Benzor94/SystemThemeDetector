@@ -31,7 +31,6 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
             previousTheme = currentTheme;
             log.info("Theme changed to: {}.", currentTheme);
             callback.accept(currentTheme);
-
         }
     }
 
