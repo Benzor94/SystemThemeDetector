@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import hu.benzor.systemthemedetector.api.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.api.environment.Platform;
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
 import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
@@ -12,6 +14,20 @@ import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SystemThemeDetectorTest {
+
+    @Test
+    @Tag("manual")
+    void testGetPlatform() {
+        Platform platform = SystemThemeDetector.getPlatform();
+        System.out.println("Platform: " + platform);
+    }
+
+    @Test
+    @Tag("manual")
+    void testGetDesktopEnvironment() {
+        DesktopEnvironment de = SystemThemeDetector.getDesktopEnvironment();
+        System.out.println("Desktop environment: " + de);
+    }
     
     @Test
     @Tag("manual")
