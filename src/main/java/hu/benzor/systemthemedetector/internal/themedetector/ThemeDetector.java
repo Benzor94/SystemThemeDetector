@@ -4,14 +4,14 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 
+import hu.benzor.systemthemedetector.api.listeners.ListenerHandle;
+import hu.benzor.systemthemedetector.api.listeners.ListenerHandleImpl;
+import hu.benzor.systemthemedetector.api.theme.Theme;
 import hu.benzor.systemthemedetector.internal.listeners.Scheduler;
 import hu.benzor.systemthemedetector.internal.listeners.ThemeChangeListener;
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.AccentColorDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.font.FontDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.mode.ModeDetector;
-import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
-import hu.benzor.systemthemedetector.listeners.api.ListenerHandleImpl;
-import hu.benzor.systemthemedetector.theme.Theme;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

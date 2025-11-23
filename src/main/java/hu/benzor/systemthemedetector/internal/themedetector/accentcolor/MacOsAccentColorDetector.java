@@ -2,7 +2,7 @@ package hu.benzor.systemthemedetector.internal.themedetector.accentcolor;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
+import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 
 public final class MacOsAccentColorDetector extends AccentColorDetector {
 

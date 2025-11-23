@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import hu.benzor.systemthemedetector.theme.Theme;
+import hu.benzor.systemthemedetector.api.theme.Theme;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

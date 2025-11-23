@@ -2,8 +2,8 @@ package hu.benzor.systemthemedetector.internal.themedetector.mode;
 
 import java.util.Optional;
 
+import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
-import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

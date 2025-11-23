@@ -1,7 +1,7 @@
 package hu.benzor.systemthemedetector.internal.environment;
 
-import hu.benzor.systemthemedetector.environment.api.DesktopEnvironment;
-import hu.benzor.systemthemedetector.environment.api.Platform;
+import hu.benzor.systemthemedetector.api.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.api.environment.Platform;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

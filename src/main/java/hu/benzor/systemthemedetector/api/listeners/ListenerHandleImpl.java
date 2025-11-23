@@ -1,8 +1,8 @@
-package hu.benzor.systemthemedetector.listeners.api;
+package hu.benzor.systemthemedetector.api.listeners;
 
 import java.util.concurrent.ScheduledFuture;
 
-import hu.benzor.systemthemedetector.theme.Theme;
+import hu.benzor.systemthemedetector.api.theme.Theme;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

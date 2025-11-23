@@ -1,4 +1,4 @@
-package hu.benzor.systemthemedetector.theme;
+package hu.benzor.systemthemedetector.api.theme;
 
 import java.util.Optional;
 

@@ -5,8 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
-import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -2,7 +2,7 @@ package hu.benzor.systemthemedetector.internal.themedetector.mode;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.theme.Theme.Mode;
+import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 
 public final class FallbackModeDetector extends ModeDetector {
 

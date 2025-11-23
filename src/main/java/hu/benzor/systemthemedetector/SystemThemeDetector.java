@@ -10,8 +10,12 @@ import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.Fallback
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.LinuxAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.MacOsAccentColorDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.accentcolor.WindowsAccentColorDetector;
-import hu.benzor.systemthemedetector.environment.api.DesktopEnvironment;
-import hu.benzor.systemthemedetector.environment.api.Platform;
+import hu.benzor.systemthemedetector.api.environment.DesktopEnvironment;
+import hu.benzor.systemthemedetector.api.environment.Platform;
+import hu.benzor.systemthemedetector.api.listeners.ListenerHandle;
+import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
+import hu.benzor.systemthemedetector.api.theme.Theme.Font;
+import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.font.FallbackFontDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.font.FontDetector;
@@ -23,10 +27,6 @@ import hu.benzor.systemthemedetector.internal.themedetector.mode.LinuxModeDetect
 import hu.benzor.systemthemedetector.internal.themedetector.mode.MacOsModeDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.mode.ModeDetector;
 import hu.benzor.systemthemedetector.internal.themedetector.mode.WindowsModeDetector;
-import hu.benzor.systemthemedetector.listeners.api.ListenerHandle;
-import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
-import hu.benzor.systemthemedetector.theme.Theme.Font;
-import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

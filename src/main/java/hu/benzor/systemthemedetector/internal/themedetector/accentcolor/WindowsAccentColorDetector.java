@@ -2,8 +2,8 @@ package hu.benzor.systemthemedetector.internal.themedetector.accentcolor;
 
 import java.util.Optional;
 
+import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
-import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

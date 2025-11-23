@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import hu.benzor.systemthemedetector.theme.Theme.AccentColor;
-import hu.benzor.systemthemedetector.theme.Theme.Font;
-import hu.benzor.systemthemedetector.theme.Theme.Mode;
+import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
+import hu.benzor.systemthemedetector.api.theme.Theme.Font;
+import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 
 import static org.junit.jupiter.api.Assertions.*;
 

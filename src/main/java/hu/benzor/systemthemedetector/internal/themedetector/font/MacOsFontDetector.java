@@ -2,7 +2,7 @@ package hu.benzor.systemthemedetector.internal.themedetector.font;
 
 import java.util.Optional;
 
-import hu.benzor.systemthemedetector.theme.Theme.Font;
+import hu.benzor.systemthemedetector.api.theme.Theme.Font;
 
 public final class MacOsFontDetector extends FontDetector {
 

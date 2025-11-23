@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import hu.benzor.systemthemedetector.api.theme.Theme.Mode;
 import hu.benzor.systemthemedetector.internal.utils.ProcessUtils;
-import hu.benzor.systemthemedetector.theme.Theme.Mode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
