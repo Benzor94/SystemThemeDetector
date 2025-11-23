@@ -5,5 +5,9 @@ import hu.benzor.systemthemedetector.internal.themedetector.ThemeDetector;
 
 public sealed abstract class ModeDetector extends ThemeDetector<Mode>
     permits LinuxModeDetector, WindowsModeDetector, MacOsModeDetector, FallbackModeDetector {
-
+    
+    @Override
+    protected Class<Mode> type() {
+        return Mode.class;
+    }
 }

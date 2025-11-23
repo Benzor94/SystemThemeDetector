@@ -5,5 +5,10 @@ import hu.benzor.systemthemedetector.internal.themedetector.ThemeDetector;
 
 public sealed abstract class AccentColorDetector extends ThemeDetector<AccentColor>
     permits LinuxAccentColorDetector, WindowsAccentColorDetector, MacOsAccentColorDetector, FallbackAccentColorDetector {
+    
+    @Override
+    protected Class<AccentColor> type() {
+        return AccentColor.class;
+    }
 
 }

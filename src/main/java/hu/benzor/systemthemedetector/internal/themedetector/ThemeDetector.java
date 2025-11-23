@@ -26,9 +26,9 @@ public abstract sealed class ThemeDetector<T extends Theme>
     }
 
     public ListenerHandle<T> registerCallback(Consumer<Optional<T>> callback) {
-        ThemeChangeListener<T> listener = new ThemeChangeListener<>(this::getTheme, callback);
+        ThemeChangeListener<T> listener = new ThemeChangeListener<>(type(), this::getTheme, callback);
         ScheduledFuture<?> task = Scheduler.schedule(listener);
-        return new ListenerHandleImpl<>(task);
+        return new ListenerHandleImpl<>(type(), task);
     }
 
     protected abstract ProcessBuilder getProcessBuilder();
@@ -36,6 +36,8 @@ public abstract sealed class ThemeDetector<T extends Theme>
     protected abstract Optional<T> getThemeFromProcessOutput(String output);
 
     protected abstract Optional<String> parseProcessOutput(ProcessBuilder processBuilder);
+
+    protected abstract Class<T> type();
 
     private Optional<T> getTheme() {
         return parseProcessOutput(getProcessBuilder()).flatMap(this::getThemeFromProcessOutput);
