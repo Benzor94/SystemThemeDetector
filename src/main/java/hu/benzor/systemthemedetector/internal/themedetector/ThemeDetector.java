@@ -21,7 +21,7 @@ public abstract sealed class ThemeDetector<T extends Theme>
     
     public Optional<T> getCurrentTheme() {
         Optional<T> theme = getTheme();
-        log.info("Current theme is: {}.", theme);
+        log.info("Current {} is: {}.", type().getSimpleName().toLowerCase(), theme);
         return theme;
     }
 
