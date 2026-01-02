@@ -2,16 +2,25 @@ package hu.benzor.systemthemedetector.internal.environment;
 
 import hu.benzor.systemthemedetector.api.environment.DesktopEnvironment;
 import hu.benzor.systemthemedetector.api.environment.Platform;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import hu.benzor.systemthemedetector.internal.environment.propertyreader.EnvironmentReader;
+import hu.benzor.systemthemedetector.internal.environment.propertyreader.PropertyReader;
+import hu.benzor.systemthemedetector.internal.environment.propertyreader.SystemPropertyReader;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class EnvironmentDetector {
 
-    public static Platform getOperatingSystem() {
-        String osName = System.getProperty("os.name");
+    private final PropertyReader systemPropertyReader;
+    private final PropertyReader environmentVariableReader;
+    
+    public EnvironmentDetector() {
+        this(new SystemPropertyReader(), new EnvironmentReader());
+    }
+
+    public Platform getPlatform() {
+        String osName = systemPropertyReader.getValue("os.name").orElse(null);
 
         if (osName == null) {
             log.warn("Platform cannot be determined as its descriptor was null.");
@@ -38,8 +47,8 @@ public class EnvironmentDetector {
         return Platform.UNKNOWN;
     }
 
-    public static DesktopEnvironment getDesktopEnvironment() {
-        String deName = System.getenv("XDG_CURRENT_DESKTOP");
+    public DesktopEnvironment getDesktop() {
+        String deName = environmentVariableReader.getValue("XDG_CURRENT_DESKTOP").orElse(null);
 
         if (deName == null) {
             log.warn("Desktop environment cannot be determined as its descriptor was null.");
