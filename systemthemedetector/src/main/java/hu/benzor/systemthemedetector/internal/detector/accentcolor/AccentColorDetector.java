@@ -5,7 +5,6 @@ import hu.benzor.systemthemedetector.internal.detector.ThemeDetector;
 
 public abstract sealed class AccentColorDetector extends ThemeDetector<AccentColor>
 permits
-    FallbackAccentColorDetector,
     LinuxAccentColorDetector,
     MacOsAccentColorDetector,
     WindowsAccentColorDetector

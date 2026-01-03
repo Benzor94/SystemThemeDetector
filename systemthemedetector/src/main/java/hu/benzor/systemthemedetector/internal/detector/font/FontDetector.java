@@ -5,7 +5,6 @@ import hu.benzor.systemthemedetector.internal.detector.ThemeDetector;
 
 public abstract sealed class FontDetector extends ThemeDetector<Font>
 permits
-    FallbackFontDetector,
     LinuxFontDetector,
     MacOsFontDetector,
     WindowsFontDetector
