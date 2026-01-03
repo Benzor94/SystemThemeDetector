@@ -11,11 +11,10 @@ import lombok.RequiredArgsConstructor;
 public class FilteredCommandOutputLineMapper {
 
     private final ProcessBuilder processBuilder;
-    private String filter;
+    private final String filter;
 
-    public FilteredCommandOutputLineMapper filter(String filter) {
-        this.filter = filter;
-        return this;
+    public FilteredCommandOutputLineMapper(ProcessBuilder processBuilder) {
+        this(processBuilder, null);
     }
 
     public <T> Optional<T> mapLine(Function<String, Optional<T>> lineMapper) {
@@ -27,7 +26,7 @@ public class FilteredCommandOutputLineMapper {
             } finally {
                 process.destroy();
             }
-        } catch (IOException e){
+        } catch (IOException | IndexOutOfBoundsException e){
             return Optional.empty();
         }
         return line.flatMap(lineMapper);

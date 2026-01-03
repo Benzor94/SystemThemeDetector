@@ -40,8 +40,7 @@ public class FilteredCommandOutputLineMapperTest {
     void testReadingFilteredLine() {
         String[] lines = {"Hello world", "herp derp"};
         setMockCommandOutput(lines);
-        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder)
-            .filter("herp");
+        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder, "herp");
         Optional<String> result = outputLineMapper.mapLine(s -> Optional.of(s));
         
         Assertions.assertEquals(Optional.of("herp derp"), result);
@@ -60,8 +59,7 @@ public class FilteredCommandOutputLineMapperTest {
     void testReadingFilteredOutputWithNoMatch() {
         String[] lines = {"Hello world", "herp derp"};
         setMockCommandOutput(lines);
-        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder)
-            .filter("hurr");
+        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder, "hurr");
         Optional<String> result = outputLineMapper.mapLine(s -> Optional.of(s));
         
         Assertions.assertEquals(Optional.empty(), result);
@@ -71,8 +69,7 @@ public class FilteredCommandOutputLineMapperTest {
     void testLineMapping() {
         String[] lines = {"Hello world", "My name is John", "itty bitty kitty committee"};
         setMockCommandOutput(lines);
-        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder)
-            .filter("John");
+        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(processBuilder, "John");
         Optional<Integer> result = outputLineMapper.mapLine(s -> Optional.of(s.split(" ").length));
         
         Assertions.assertEquals(4, result.get());
@@ -87,6 +84,14 @@ public class FilteredCommandOutputLineMapperTest {
         Assertions.assertEquals(Optional.empty(), result);
     }
 
+    @Test
+    void testWithEmptyProcessBuilder() {
+        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(new ProcessBuilder());
+        Optional<String> result = outputLineMapper.mapLine(s -> Optional.of(s));
+
+        Assertions.assertEquals(Optional.empty(), result);
+    }
+
     private void setMockCommandOutput(String[] lines) {
         try {
             when(processBuilder.start()).thenReturn(process);
@@ -94,7 +99,6 @@ public class FilteredCommandOutputLineMapperTest {
             when(reader.lines()).thenReturn(Arrays.stream(lines));
         } catch (IOException e) {
             throw new AssertionError(e);
-        }
-        
+        }        
     }
 }
