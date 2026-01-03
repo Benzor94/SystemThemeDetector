@@ -111,7 +111,6 @@ public class SystemThemeDetector {
     }
 
     public DesktopEnvironment getDesktop() {
-        stopAllListeners(AccentColor.class);
         return desktop;
     }
 
