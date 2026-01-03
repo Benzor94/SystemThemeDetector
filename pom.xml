@@ -23,6 +23,7 @@
         <logback.version>1.5.6</logback.version>
         <junit.version>5.14.1</junit.version>
         <mockito.version>5.21.0</mockito.version>
+        <awaitility.version>4.3.0</awaitility.version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +68,14 @@
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
