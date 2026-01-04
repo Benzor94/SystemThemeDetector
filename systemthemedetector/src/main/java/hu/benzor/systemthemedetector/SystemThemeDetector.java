@@ -20,7 +20,7 @@ import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 
 public class SystemThemeDetector {
 
-    private static final List<ListenerHandle<? extends Theme>> listenerHandles = new CopyOnWriteArrayList<>();
+    private final List<ListenerHandle<? extends Theme>> listenerHandles = new CopyOnWriteArrayList<>();
 
     private final Platform platform;
     private final DesktopEnvironment desktop;
@@ -85,7 +85,7 @@ public class SystemThemeDetector {
         return desktop;
     }
 
-    public static void stopAllListeners(Class<? extends Theme> type) {
+    public void stopAllListeners(Class<? extends Theme> type) {
         Arrays
             .stream(listenerHandles.toArray(new ListenerHandle<?>[0]))
             .filter(handle -> type.isAssignableFrom(handle.type()))
@@ -97,7 +97,11 @@ public class SystemThemeDetector {
             );
     }
 
-    public static void stopAllListeners() {
+    public void stopAllListeners() {
         stopAllListeners(Theme.class);
+    }
+
+    List<ListenerHandle<? extends Theme>> inspectHandles() {
+        return listenerHandles.stream().toList();
     }
 }
