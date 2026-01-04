@@ -56,9 +56,6 @@ public class LinuxFontDetectorTest {
         Optional<Font> emoji = fontDetector.outputLineToThemeMap("'😀🔥Font✨ 18'");
         Optional<Font> arabic = fontDetector.outputLineToThemeMap("'خط عربي, 14.25'");
 
-        for (var font: List.of(extendedLatin, cyrillic, emoji, arabic)) {
-            Assertions.assertTrue(font.isPresent());
-        }
         Assertions.assertEquals(new Font("Árvíztűrő Tükörfúrógép", "12"), extendedLatin.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(new Font("Русский Шрифт", "10.5"), cyrillic.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(new Font("😀🔥Font✨", "18"), emoji.orElseThrow(() -> new AssertionError()));
