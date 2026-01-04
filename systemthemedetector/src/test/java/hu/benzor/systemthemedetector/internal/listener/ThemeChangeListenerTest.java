@@ -3,6 +3,8 @@ package hu.benzor.systemthemedetector.internal.listener;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -120,6 +122,23 @@ public class ThemeChangeListenerTest {
             .run();
         
         Mockito.verify(callback, never()).accept(any());
+    }
+
+    @Test
+    void testListenerRemembersState() {
+        Supplier<Optional<Appearance>> themeSupplier = buildThemeSupplier(Appearance.DARK, Appearance.LIGHT, Appearance.DARK);
+        @SuppressWarnings("unchecked")
+        Consumer<Appearance> callback = Mockito.mock(Consumer.class);
+
+        ThemeChangeListener<Appearance> listener = ThemeChangeListener
+            .builder(Appearance.class)
+            .themeSupplier(themeSupplier)
+            .callback(callback)
+            .build();
+        listener.run();
+        listener.run();
+
+        verify(callback, times(2)).accept(any());
     }
 
     @SafeVarargs

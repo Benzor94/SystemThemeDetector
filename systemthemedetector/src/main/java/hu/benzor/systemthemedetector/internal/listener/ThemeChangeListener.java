@@ -35,6 +35,7 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
                 curr -> {
                     log.info("{} changed to {}.", type.getSimpleName(), curr);
                     callback.accept(curr);
+                    previousTheme = curr;
                 }
             );
     }

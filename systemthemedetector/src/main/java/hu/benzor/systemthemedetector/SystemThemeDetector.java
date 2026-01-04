@@ -13,18 +13,8 @@ import hu.benzor.systemthemedetector.api.theme.Theme;
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.api.theme.Theme.Appearance;
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
-import hu.benzor.systemthemedetector.internal.detector.accentcolor.AccentColorDetector;
-import hu.benzor.systemthemedetector.internal.detector.accentcolor.LinuxAccentColorDetector;
-import hu.benzor.systemthemedetector.internal.detector.accentcolor.MacOsAccentColorDetector;
-import hu.benzor.systemthemedetector.internal.detector.accentcolor.WindowsAccentColorDetector;
-import hu.benzor.systemthemedetector.internal.detector.appearance.AppearanceDetector;
-import hu.benzor.systemthemedetector.internal.detector.appearance.LinuxAppearanceDetector;
-import hu.benzor.systemthemedetector.internal.detector.appearance.MacOsAppearanceDetector;
-import hu.benzor.systemthemedetector.internal.detector.appearance.WindowsAppearanceDetector;
-import hu.benzor.systemthemedetector.internal.detector.font.FontDetector;
-import hu.benzor.systemthemedetector.internal.detector.font.LinuxFontDetector;
-import hu.benzor.systemthemedetector.internal.detector.font.MacOsFontDetector;
-import hu.benzor.systemthemedetector.internal.detector.font.WindowsFontDetector;
+import hu.benzor.systemthemedetector.internal.detector.DetectorFactory;
+import hu.benzor.systemthemedetector.internal.detector.ThemeDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 
 
@@ -35,54 +25,36 @@ public class SystemThemeDetector {
     private final Platform platform;
     private final DesktopEnvironment desktop;
 
-    private final AccentColorDetector accentColorDetector;
-    private final AppearanceDetector appearanceDetector;
-    private final FontDetector fontDetector;
+    private final Optional<ThemeDetector<AccentColor>> accentColorDetector;
+    private final Optional<ThemeDetector<Appearance>> appearanceDetector;
+    private final Optional<ThemeDetector<Font>> fontDetector;
 
     public SystemThemeDetector() {
-        EnvironmentDetector envDetector = new EnvironmentDetector();
-        this.platform = envDetector.getPlatform();
-        this.desktop = envDetector.getDesktop();
+        this(new DetectorFactory(new EnvironmentDetector()));
+    }
 
-        switch (platform) {
-            case LINUX -> {
-                accentColorDetector = new LinuxAccentColorDetector();
-                appearanceDetector = new LinuxAppearanceDetector();
-                fontDetector = new LinuxFontDetector(desktop);
-            }
-            case MACOS -> {
-                accentColorDetector = new MacOsAccentColorDetector();
-                appearanceDetector = new MacOsAppearanceDetector();
-                fontDetector = new MacOsFontDetector();
-            }
-            case WINDOWS -> {
-                accentColorDetector = new WindowsAccentColorDetector();
-                appearanceDetector = new WindowsAppearanceDetector();
-                fontDetector = new WindowsFontDetector();
-            }
-            default -> {
-                accentColorDetector = null;
-                appearanceDetector = null;
-                fontDetector = null;
-            }
-        }
+    SystemThemeDetector(DetectorFactory detectorFactory) {
+        this.platform = detectorFactory.getPlatform();
+        this.desktop = detectorFactory.getDesktop();
+        this.accentColorDetector = detectorFactory.createAccentColorDetector();
+        this.appearanceDetector = detectorFactory.createAppearanceDetector();
+        this.fontDetector = detectorFactory.createFontDetector();
     }
 
     public Optional<AccentColor> getAccentColor() {
-        return Optional.ofNullable(accentColorDetector).flatMap(x -> x.getTheme());
+        return accentColorDetector.flatMap(x -> x.getTheme());
     }
 
     public Optional<Appearance> getAppearance() {
-        return Optional.ofNullable(appearanceDetector).flatMap(x -> x.getTheme());
+        return appearanceDetector.flatMap(x -> x.getTheme());
     }
     
     public Optional<Font> getFont() {
-        return Optional.ofNullable(fontDetector).flatMap(x -> x.getTheme());
+        return fontDetector.flatMap(x -> x.getTheme());
     }
 
     public ListenerHandle<AccentColor> onAccentColorChange(Consumer<AccentColor> callback) {
-        ListenerHandle<AccentColor> handle = Optional
-            .ofNullable(accentColorDetector)
+        ListenerHandle<AccentColor> handle = accentColorDetector
             .map(x -> x.registerCallback(callback))
             .orElseGet(() -> new ListenerHandle<>(AccentColor.class, null));
         listenerHandles.add(handle);
@@ -90,8 +62,7 @@ public class SystemThemeDetector {
     }
 
     public ListenerHandle<Appearance> onAppearanceChange(Consumer<Appearance> callback) {
-        ListenerHandle<Appearance> handle = Optional
-            .ofNullable(appearanceDetector)
+        ListenerHandle<Appearance> handle = appearanceDetector
             .map(x -> x.registerCallback(callback))
             .orElseGet(() -> new ListenerHandle<>(Appearance.class, null));
         listenerHandles.add(handle);
@@ -100,7 +71,7 @@ public class SystemThemeDetector {
 
     public ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
         ListenerHandle<Font> handle = platform == Platform.LINUX
-            ? fontDetector.registerCallback(callback)
+            ? fontDetector.get().registerCallback(callback)
             : new ListenerHandle<>(Font.class, null);
         listenerHandles.add(handle);
         return handle;
