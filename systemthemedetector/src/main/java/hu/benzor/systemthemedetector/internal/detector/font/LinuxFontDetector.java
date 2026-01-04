@@ -15,7 +15,7 @@ public final class LinuxFontDetector extends FontDetector {
     private final FilteredCommandOutputLineMapper outputLineMapper;
 
     private final Pattern cmdOutputPattern = Pattern.compile(
-        "^'([A-Za-z]+(?:\\s+[A-Za-z]+)*)(?:,?\\s+)(\\d+(?:\\.\\d+)?)'$"
+        "^'([^0-9]+?)(?:,?\\s+)(\\d+(?:\\.\\d+)?)'$"
     );
 
     public LinuxFontDetector(DesktopEnvironment desktop) {
