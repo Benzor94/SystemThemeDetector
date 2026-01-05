@@ -51,7 +51,9 @@ public final class LinuxFontDetector extends FontDetector {
         String fontSize = matcher.group(2);
         try {
             Double.parseDouble(fontSize);
-            return Optional.of(new Font(fontName, fontSize));
+            Font font = new Font(fontName, fontSize);
+            log.debug("Font determined: {}", font);
+            return Optional.of(font);
         } catch (IllegalArgumentException e) {
             log.debug("Font size is not a valid number: {}", fontSize);
             return Optional.empty();
