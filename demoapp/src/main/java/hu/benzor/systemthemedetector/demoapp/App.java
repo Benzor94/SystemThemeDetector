@@ -94,7 +94,7 @@ public class App extends Application {
             scene.getRoot().setStyle(
                 scene.getRoot().getStyle()
                     + "-fx-font-family: '" + fontFamily + "';"
-                    + "-fx-font-size: " + fontSize + "px;"
+                    + "-fx-font-size: " + fontSize + "pt;"
             );
         } catch (NumberFormatException e) {
 

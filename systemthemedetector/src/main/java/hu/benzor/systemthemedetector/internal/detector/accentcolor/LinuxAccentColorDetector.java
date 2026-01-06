@@ -52,7 +52,7 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
             int[] rgbColors = IntStream.of(1, 2, 3)
                 .mapToObj(matcher::group)
                 .mapToDouble(Double::parseDouble)
-                .mapToInt(this::srgbToRgb)
+                .mapToInt(this::decimalToIntRgb)
                 .toArray();
             AccentColor accentColor = AccentColor.fromArray(rgbColors);
             log.debug("Accent color determined: {}", accentColor);
@@ -64,11 +64,11 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
         }
     }
 
-    private int srgbToRgb(double srgb) {
-        if (srgb < 0 || srgb > 1) {
-            throw new IllegalArgumentException("Color member in sRGB format must be between 0 and 1. It was " + srgb + ".");
+    private int decimalToIntRgb(double decimal) {
+        if (decimal < 0 || decimal > 1) {
+            throw new IllegalArgumentException("Color member must be between 0 and 1. It was " + decimal + ".");
         }
-        int scaled = (int) Math.round(srgb * 255);
+        int scaled = (int) Math.round(decimal * 255);
         return Math.max(0, Math.min(scaled, 255));
     }
 
