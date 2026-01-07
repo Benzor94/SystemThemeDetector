@@ -89,7 +89,7 @@ public class App extends Application {
     public void setFont(Font font) {
         String fontFamily = font.name();
         try {
-            double fontSize = Double.parseDouble(font.size());
+            double fontSize = font.size();
             scene.getRoot().setStyle(
                 scene.getRoot().getStyle()
                     + "-fx-font-family: '" + fontFamily + "';"

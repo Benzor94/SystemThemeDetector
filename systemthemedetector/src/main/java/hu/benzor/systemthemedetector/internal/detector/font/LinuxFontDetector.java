@@ -48,14 +48,14 @@ public final class LinuxFontDetector extends FontDetector {
             return Optional.empty();
         }
         String fontName = matcher.group(1);
-        String fontSize = matcher.group(2);
+        String fontSizeStr = matcher.group(2);
         try {
-            Double.parseDouble(fontSize);
+            double fontSize = Double.parseDouble(fontSizeStr);
             Font font = new Font(fontName, fontSize);
             log.debug("Font determined: {}", font);
             return Optional.of(font);
         } catch (IllegalArgumentException e) {
-            log.debug("Font size is not a valid number: {}", fontSize);
+            log.debug("Font size is not a valid number: {}", fontSizeStr);
             return Optional.empty();
         } 
     }

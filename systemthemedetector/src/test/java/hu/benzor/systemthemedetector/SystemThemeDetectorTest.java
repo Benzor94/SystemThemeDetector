@@ -52,7 +52,7 @@ public class SystemThemeDetectorTest {
 
         when(accentColorDetector.getTheme()).thenReturn(Optional.of(new AccentColor(255, 255, 125)));
         when(appearanceDetector.getTheme()).thenReturn(Optional.of(Appearance.DARK));
-        when(fontDetector.getTheme()).thenReturn(Optional.of(new Font("Ubuntu", "11")));
+        when(fontDetector.getTheme()).thenReturn(Optional.of(new Font("Ubuntu", 11)));
 
         when(accentColorDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(AccentColor.class, null));
         when(appearanceDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Appearance.class, null));
@@ -69,7 +69,7 @@ public class SystemThemeDetectorTest {
 
         Assertions.assertEquals(new AccentColor(255, 255, 125), accentColor.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(Appearance.DARK, appearance.orElseThrow(() -> new AssertionError()));
-        Assertions.assertEquals(new Font("Ubuntu", "11"), font.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Ubuntu", 11), font.orElseThrow(() -> new AssertionError()));
     }
 
     @Test

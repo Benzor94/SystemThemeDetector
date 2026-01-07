@@ -50,5 +50,5 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
         }
     }
 
-    public record Font(String name, String size) implements Theme {}
+    public record Font(String name, double size) implements Theme {}
 }

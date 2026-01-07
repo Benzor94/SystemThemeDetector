@@ -60,8 +60,8 @@ public class ThemeChangeListenerTest {
     @Test
     void testFontChange() {
         Supplier<Optional<Font>> themeSupplier = buildThemeSupplier(
-            new Font("Ubuntu", "10"),
-            new Font("Adwaita Sans", "11")
+            new Font("Ubuntu", 10),
+            new Font("Adwaita Sans", 11)
         );
         @SuppressWarnings("unchecked")
         Consumer<Font> callback = Mockito.mock(Consumer.class);
@@ -73,7 +73,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
-        Mockito.verify(callback).accept(eq(new Font("Adwaita Sans", "11")));
+        Mockito.verify(callback).accept(eq(new Font("Adwaita Sans", 11)));
     }
 
     @Test

@@ -26,7 +26,7 @@ public class FilteredCommandOutputLineMapper {
             } finally {
                 process.destroy();
             }
-        } catch (IOException | IndexOutOfBoundsException e){
+        } catch (IOException | IndexOutOfBoundsException | NullPointerException e){
             return Optional.empty();
         }
         return line.flatMap(lineMapper);

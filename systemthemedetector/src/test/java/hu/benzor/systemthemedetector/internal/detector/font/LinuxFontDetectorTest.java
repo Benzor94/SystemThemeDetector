@@ -16,7 +16,7 @@ public class LinuxFontDetectorTest {
         LinuxFontDetector fontDetector = new LinuxFontDetector(DesktopEnvironment.KDE);
         Optional<Font> result = fontDetector.outputLineToThemeMap("'Ubuntu 10'");
 
-        Assertions.assertEquals(new Font("Ubuntu", "10"), result.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Ubuntu", 10), result.orElseThrow(() -> new AssertionError()));
         /*
         Optional<Font> resultMultiWordInteger = fontDetector.outputLineToThemeMap("'Fira Sans Medium 11'");
         Optional<Font> resultMultiWordDecimal = fontDetector.outputLineToThemeMap("'Noto Sans 11.5'");
@@ -29,7 +29,7 @@ public class LinuxFontDetectorTest {
         LinuxFontDetector fontDetector = new LinuxFontDetector(DesktopEnvironment.KDE);
         Optional<Font> result = fontDetector.outputLineToThemeMap("'Fira Sans Medium 11'");
 
-        Assertions.assertEquals(new Font("Fira Sans Medium", "11"), result.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Fira Sans Medium", 11), result.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class LinuxFontDetectorTest {
         LinuxFontDetector fontDetector = new LinuxFontDetector(DesktopEnvironment.KDE);
         Optional<Font> result = fontDetector.outputLineToThemeMap("'Adwaita Sans 11.5'");
 
-        Assertions.assertEquals(new Font("Adwaita Sans", "11.5"), result.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Adwaita Sans", 11.5), result.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class LinuxFontDetectorTest {
         LinuxFontDetector fontDetector = new LinuxFontDetector(DesktopEnvironment.KDE);
         Optional<Font> result = fontDetector.outputLineToThemeMap("'Noto Sans, 9.5'");
 
-        Assertions.assertEquals(new Font("Noto Sans", "9.5"), result.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Noto Sans", 9.5), result.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
@@ -56,10 +56,10 @@ public class LinuxFontDetectorTest {
         Optional<Font> emoji = fontDetector.outputLineToThemeMap("'😀🔥Font✨ 18'");
         Optional<Font> arabic = fontDetector.outputLineToThemeMap("'خط عربي, 14.25'");
 
-        Assertions.assertEquals(new Font("Árvíztűrő Tükörfúrógép", "12"), extendedLatin.orElseThrow(() -> new AssertionError()));
-        Assertions.assertEquals(new Font("Русский Шрифт", "10.5"), cyrillic.orElseThrow(() -> new AssertionError()));
-        Assertions.assertEquals(new Font("😀🔥Font✨", "18"), emoji.orElseThrow(() -> new AssertionError()));
-        Assertions.assertEquals(new Font("خط عربي", "14.25"), arabic.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Árvíztűrő Tükörfúrógép", 12), extendedLatin.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("Русский Шрифт", 10.5), cyrillic.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("😀🔥Font✨", 18), emoji.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("خط عربي", 14.25), arabic.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
