@@ -69,7 +69,7 @@ public class App extends Application {
     public void setAppearance(Appearance appearance) {
         var styleSheet = switch (appearance) {
             case DARK -> new PrimerDark().getUserAgentStylesheet();
-            case LIGHT -> new PrimerLight().getUserAgentStylesheet();
+            case LIGHT, NO_PREFERENCE -> new PrimerLight().getUserAgentStylesheet();
         };
         Application.setUserAgentStylesheet(styleSheet);
     }

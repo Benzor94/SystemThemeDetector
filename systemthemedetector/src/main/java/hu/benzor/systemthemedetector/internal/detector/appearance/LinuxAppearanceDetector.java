@@ -40,6 +40,7 @@ public final class LinuxAppearanceDetector extends AppearanceDetector {
         /*
          * We expect strings of the form "(<uint32 n>,)" where n is an unsigned integer,
          * and we want to extract this integer.
+         * 0 = no preference
          * 1 = dark
          * 2 = light
          */
@@ -64,7 +65,7 @@ public final class LinuxAppearanceDetector extends AppearanceDetector {
                 }
                 case 0 -> {
                     log.debug("Appearance is up to each app to determine");
-                    yield Optional.empty();
+                    yield Optional.of(Appearance.NO_PREFERENCE);
                 }
                 default -> {
                     log.debug("Could not determine appearance from number: {}", appearanceNumber);

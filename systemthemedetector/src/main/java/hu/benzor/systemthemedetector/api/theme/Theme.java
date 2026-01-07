@@ -7,8 +7,9 @@ import lombok.Getter;
 public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme.Font {
 
     public enum Appearance implements Theme {
-        DARK(0),
-        LIGHT(1);
+        NO_PREFERENCE(0),
+        DARK(1),
+        LIGHT(2);
 
         @Getter
         private int id;
@@ -19,8 +20,9 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
 
         public static Optional<Appearance> fromId(int id) {
             return switch (id) {
-                case 0 -> Optional.of(DARK);
-                case 1 -> Optional.of(LIGHT);
+                case 0 -> Optional.of(NO_PREFERENCE);
+                case 1 -> Optional.of(DARK);
+                case 2 -> Optional.of(LIGHT);
                 default -> Optional.empty();
             };
         }

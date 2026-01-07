@@ -30,7 +30,7 @@ public class LinuxAppearanceDetectorTest {
         LinuxAppearanceDetector appearanceDetector = new LinuxAppearanceDetector();
         Optional<Appearance> result = appearanceDetector.outputLineToThemeMap("(<uint32 0>,)");
 
-        Assertions.assertTrue(result.isEmpty());
+        Assertions.assertEquals(Appearance.NO_PREFERENCE, result.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
