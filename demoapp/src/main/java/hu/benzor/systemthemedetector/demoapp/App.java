@@ -80,7 +80,6 @@ public class App extends Application {
         scene.getRoot().setStyle(
             "-fx-accent: " + cssColor + ";"
         );
-
         accentRegion.setStyle(
             "-fx-background-color: " + cssColor + ";" +
             "-fx-background-radius: 6;"

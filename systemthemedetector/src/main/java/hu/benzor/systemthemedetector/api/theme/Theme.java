@@ -26,7 +26,7 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
         }
     }
 
-    public record AccentColor(int red, int blue, int green) implements Theme {
+    public record AccentColor(int red, int green, int blue) implements Theme {
 
         public AccentColor {
             verifyColorNumber(red);
