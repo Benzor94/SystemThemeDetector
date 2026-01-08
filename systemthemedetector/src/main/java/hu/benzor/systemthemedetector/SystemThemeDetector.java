@@ -70,9 +70,12 @@ public class SystemThemeDetector {
     }
 
     public ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
-        ListenerHandle<Font> handle = platform == Platform.LINUX
-            ? fontDetector.get().registerCallback(callback)
-            : new ListenerHandle<>(Font.class, null);
+        if (platform != Platform.LINUX) {
+            return new ListenerHandle<>(Font.class, null);
+        }
+        ListenerHandle<Font> handle = fontDetector
+            .orElseThrow(() -> new IllegalStateException("Font detector must exist on Linux."))
+            .registerCallback(callback);
         listenerHandles.add(handle);
         return handle;
     }

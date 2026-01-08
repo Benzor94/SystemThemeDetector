@@ -17,6 +17,17 @@ public class Scheduler {
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(Scheduler::daemonThreadFactory);
     private static final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
+    static {
+        Runtime.getRuntime().addShutdownHook(
+            new Thread(
+                () -> {
+                    scheduler.shutdownNow();
+                    executor.shutdownNow();
+                }
+            )
+        );
+    }
+
     public static ScheduledFuture<?> schedule(Runnable task) {
         return scheduler.scheduleAtFixedRate(() -> executor.submit(task), 0, POLL_INTERVAL, TimeUnit.MILLISECONDS);
     }

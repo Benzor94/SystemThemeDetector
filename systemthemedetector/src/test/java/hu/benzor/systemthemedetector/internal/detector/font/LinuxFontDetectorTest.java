@@ -55,22 +55,22 @@ public class LinuxFontDetectorTest {
         Optional<Font> cyrillic = fontDetector.outputLineToThemeMap("'Русский Шрифт 10.5'");
         Optional<Font> emoji = fontDetector.outputLineToThemeMap("'😀🔥Font✨ 18'");
         Optional<Font> arabic = fontDetector.outputLineToThemeMap("'خط عربي, 14.25'");
+        Optional<Font> number = fontDetector.outputLineToThemeMap("'My 2 awesome font, 14.5'");
 
         Assertions.assertEquals(new Font("Árvíztűrő Tükörfúrógép", 12), extendedLatin.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(new Font("Русский Шрифт", 10.5), cyrillic.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(new Font("😀🔥Font✨", 18), emoji.orElseThrow(() -> new AssertionError()));
         Assertions.assertEquals(new Font("خط عربي", 14.25), arabic.orElseThrow(() -> new AssertionError()));
+        Assertions.assertEquals(new Font("My 2 awesome font", 14.5), number.orElseThrow(() -> new AssertionError()));
     }
 
     @Test
     void testFailure() {
         LinuxFontDetector fontDetector = new LinuxFontDetector(DesktopEnvironment.KDE);
         Optional<Font> resultNoSingleQuotes = fontDetector.outputLineToThemeMap("Noto Sans, 9.5");
-        Optional<Font> resultNumbersInName = fontDetector.outputLineToThemeMap("'Fira 9 Sans 13'");
-        Optional<Font> resultMultipleNumbers = fontDetector.outputLineToThemeMap("'Droid Sans, 13.5, 12.4'");
         Optional<Font> resultNumberTextReversed = fontDetector.outputLineToThemeMap("'221B Baker Street'");
 
-        for (var font : List.of(resultNoSingleQuotes, resultNumbersInName, resultMultipleNumbers, resultNumberTextReversed)) {
+        for (var font : List.of(resultNoSingleQuotes, resultNumberTextReversed)) {
             Assertions.assertTrue(font.isEmpty());
         }
     }

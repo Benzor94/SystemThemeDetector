@@ -3,6 +3,7 @@ package hu.benzor.systemthemedetector.internal.command;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,13 @@ public class FilteredCommandOutputLineMapper {
             try (BufferedReader reader = process.inputReader()) {
                 line = reader.lines().filter(s -> filter == null ? true : s.contains(filter)).findFirst();
             } finally {
-                process.destroy();
+                process.waitFor(1, TimeUnit.SECONDS);
+                process.destroyForcibly();
             }
-        } catch (IOException | IndexOutOfBoundsException | NullPointerException e){
+        } catch (IOException | IndexOutOfBoundsException e){
             return Optional.empty();
+        } catch (InterruptedException ignored) {
+            
         }
         return line.flatMap(lineMapper);
     }

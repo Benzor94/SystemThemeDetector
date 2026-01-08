@@ -12,7 +12,7 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
         LIGHT(2);
 
         @Getter
-        private int id;
+        private final int id;
 
         private Appearance(int id) {
             this.id = id;
@@ -50,5 +50,14 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
         }
     }
 
-    public record Font(String name, double size) implements Theme {}
+    public record Font(String name, double size) implements Theme {
+        public Font {
+            if (name.isBlank()) {
+                throw new IllegalArgumentException("Name must not be blank.");
+            }
+            if (size <= 0) {
+                throw new IllegalArgumentException("Font size must be positive.");
+            }
+        }
+    }
 }
