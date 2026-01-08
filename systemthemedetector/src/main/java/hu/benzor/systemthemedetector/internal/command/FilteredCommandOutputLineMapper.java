@@ -25,13 +25,14 @@ public class FilteredCommandOutputLineMapper {
             try (BufferedReader reader = process.inputReader()) {
                 line = reader.lines().filter(s -> filter == null ? true : s.contains(filter)).findFirst();
             } finally {
-                process.waitFor(1, TimeUnit.SECONDS);
-                process.destroyForcibly();
+                if (!process.waitFor(1, TimeUnit.SECONDS)) {
+                    process.destroyForcibly();
+                }
             }
         } catch (IOException | IndexOutOfBoundsException e){
             return Optional.empty();
         } catch (InterruptedException ignored) {
-            
+            Thread.currentThread().interrupt();
         }
         return line.flatMap(lineMapper);
     }
