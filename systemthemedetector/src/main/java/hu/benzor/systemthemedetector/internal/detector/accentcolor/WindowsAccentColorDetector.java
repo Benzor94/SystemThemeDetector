@@ -4,19 +4,56 @@ import java.util.Optional;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class WindowsAccentColorDetector extends AccentColorDetector {
+
+    private final FilteredCommandOutputLineMapper outputLineMapper;
+
+    public WindowsAccentColorDetector() {
+        ProcessBuilder pb = new ProcessBuilder(
+            "reg",
+            "query",
+            "HKCU\\Software\\Microsoft\\Windows\\DWM",
+            "/v",
+            "ColorizationColor"
+        );
+        outputLineMapper = new FilteredCommandOutputLineMapper(pb);
+    }
 
     @Override
     protected FilteredCommandOutputLineMapper commandOutputMapper() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'commandOutputMapper'");
+        return outputLineMapper;
     }
 
     @Override
     protected Optional<AccentColor> outputLineToThemeMap(String line) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'outputLineToThemeMap'");
+        /*
+         * Output: ColorizationColor    REG_DWORD    0xAARRGGBB
+         * We ignore alpha
+         */
+        String[] parts = line.split("REG_DWORD");
+        if (parts.length != 2) {
+            log.debug("Invalid line format: {}", line);
+            return Optional.empty();
+        }
+        try {
+            String colorId = parts[1].trim();
+            if (colorId.length() != 10) {
+                log.debug("Invalid color string: {}", colorId);
+                return Optional.empty();
+            }
+            long color = Long.decode(colorId);
+            int r = (int) (color >>> 16) & 0xFF;
+            int g = (int) (color >>> 8) & 0xFF;
+            int b = (int) color & 0xFF;
+            return Optional.of(new AccentColor(r, g, b));
+
+        } catch (IllegalArgumentException e) {
+            log.debug("Invalid color string: {}", e.getMessage());
+            return Optional.empty();
+        }
     }
 
 }
