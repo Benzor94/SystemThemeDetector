@@ -19,7 +19,7 @@ public final class WindowsAppearanceDetector extends AppearanceDetector {
             "/v",
             "AppsUseLightTheme"
         );
-        outputLineMapper = new FilteredCommandOutputLineMapper(pb);
+        outputLineMapper = new FilteredCommandOutputLineMapper(pb, "AppsUseLightTheme");
     }
 
     @Override

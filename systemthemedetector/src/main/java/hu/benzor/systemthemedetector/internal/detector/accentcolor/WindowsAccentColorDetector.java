@@ -19,7 +19,7 @@ public final class WindowsAccentColorDetector extends AccentColorDetector {
             "/v",
             "ColorizationColor"
         );
-        outputLineMapper = new FilteredCommandOutputLineMapper(pb);
+        outputLineMapper = new FilteredCommandOutputLineMapper(pb, "ColorizationColor");
     }
 
     @Override
