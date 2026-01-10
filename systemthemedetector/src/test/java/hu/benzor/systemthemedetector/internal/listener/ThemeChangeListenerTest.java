@@ -1,8 +1,6 @@
 package hu.benzor.systemthemedetector.internal.listener;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -35,6 +33,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
+        Mockito.verify(callback).accept(Appearance.LIGHT);
         Mockito.verify(callback).accept(Appearance.DARK);
     }
 
@@ -54,6 +53,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
+        Mockito.verify(callback).accept(eq(new AccentColor(0, 0, 0)));
         Mockito.verify(callback).accept(eq(new AccentColor(255, 255, 124)));        
     }
 
@@ -73,6 +73,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
+        Mockito.verify(callback).accept(eq(new Font("Ubuntu", 10)));
         Mockito.verify(callback).accept(eq(new Font("Adwaita Sans", 11)));
     }
 
@@ -105,7 +106,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
-        Mockito.verify(callback, never()).accept(any());
+        Mockito.verify(callback).accept(eq(Appearance.LIGHT));
     }
 
     @Test
@@ -121,7 +122,7 @@ public class ThemeChangeListenerTest {
             .build()
             .run();
         
-        Mockito.verify(callback, never()).accept(any());
+        Mockito.verify(callback).accept(Appearance.LIGHT);
     }
 
     @Test
@@ -138,7 +139,8 @@ public class ThemeChangeListenerTest {
         listener.run();
         listener.run();
 
-        verify(callback, times(2)).accept(any());
+        verify(callback).accept(Appearance.LIGHT);
+        verify(callback, times(2)).accept(Appearance.DARK);
     }
 
     @SafeVarargs

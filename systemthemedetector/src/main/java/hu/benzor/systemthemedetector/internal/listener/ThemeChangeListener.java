@@ -24,6 +24,7 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
         this.callback = callback;
 
         previousTheme = themeSupplier.get().orElse(null);
+        Optional.ofNullable(previousTheme).ifPresent(callback);
     }
     
     @Override
