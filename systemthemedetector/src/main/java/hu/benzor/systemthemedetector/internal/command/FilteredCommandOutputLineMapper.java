@@ -13,9 +13,18 @@ public class FilteredCommandOutputLineMapper {
 
     private final ProcessBuilder processBuilder;
     private final String filter;
+    private final boolean passBlankStringOnReadFailure;
 
     public FilteredCommandOutputLineMapper(ProcessBuilder processBuilder) {
-        this(processBuilder, null);
+        this(processBuilder, null, false);
+    }
+
+    public FilteredCommandOutputLineMapper(ProcessBuilder processBuilder, String filter) {
+        this(processBuilder, filter, false);
+    }
+
+    public FilteredCommandOutputLineMapper(ProcessBuilder processBuilder, boolean passBlankStringOnReadFailure) {
+        this(processBuilder, null, passBlankStringOnReadFailure);
     }
 
     public <T> Optional<T> mapLine(Function<String, Optional<T>> lineMapper) {
@@ -30,10 +39,10 @@ public class FilteredCommandOutputLineMapper {
                 }
             }
         } catch (IOException | IndexOutOfBoundsException e){
-            return Optional.empty();
+            
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-        return line.flatMap(lineMapper);
+        return passBlankStringOnReadFailure ? lineMapper.apply("") : line.flatMap(lineMapper);
     }
 }
