@@ -31,7 +31,9 @@ public final class WindowsAccentColorDetector extends AccentColorDetector {
     protected Optional<AccentColor> outputLineToThemeMap(String line) {
         /*
          * Output: ColorizationColor    REG_DWORD    0xAARRGGBB
-         * We ignore alpha
+         * Or    : ColorizationCOlor    RED_DWORD    0xRRGGBB
+         * It appears that when the color is generated from the wallpaper, there is no alpha.
+         * We ignore alpha anyways
          */
         String[] parts = line.split("REG_DWORD");
         if (parts.length != 2) {
@@ -40,7 +42,7 @@ public final class WindowsAccentColorDetector extends AccentColorDetector {
         }
         try {
             String colorId = parts[1].trim();
-            if (colorId.length() != 10) {
+            if (colorId.length() != 10 && colorId.length() != 8) {
                 log.debug("Invalid color string: {}", colorId);
                 return Optional.empty();
             }
