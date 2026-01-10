@@ -92,6 +92,14 @@ public class FilteredCommandOutputLineMapperTest {
         Assertions.assertEquals(Optional.empty(), result);
     }
 
+    @Test
+    void testPassingBlankLineOnReadFailure() {
+        FilteredCommandOutputLineMapper outputLineMapper = new FilteredCommandOutputLineMapper(new ProcessBuilder(), true);
+        Optional<Boolean> result = outputLineMapper.mapLine(s -> Optional.of(s.isBlank()));
+
+        Assertions.assertEquals(true, result.orElseThrow(() -> new AssertionError()));
+    }
+
     private void setMockCommandOutput(String[] lines) {
         try {
             when(processBuilder.start()).thenReturn(process);
