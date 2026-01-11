@@ -1,24 +1,25 @@
 package hu.benzor.systemthemedetector.internal.detector.font;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
-import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
+import hu.benzor.systemthemedetector.internal.command.DummyCommandOutputLineMapper;
 
 public final class WindowsFontDetector extends FontDetector {
 
     private static final String FONT_NAME = "Segoe UI";
     private static final double PT_SIZE = 9.0;
 
+    private final CommandOutputLineMapper outputLineMapper;
+
+    public WindowsFontDetector() {
+        this.outputLineMapper = new DummyCommandOutputLineMapper("");
+    }
+
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
-        return new FilteredCommandOutputLineMapper(null) {
-            @Override
-            public <T> Optional<T> mapLine(Function<String, Optional<T>> lineMapper) {
-                return lineMapper.apply(null);
-            }
-        };
+    protected CommandOutputLineMapper commandOutputMapper() {
+        return outputLineMapper;
     }
 
     @Override

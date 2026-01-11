@@ -9,7 +9,7 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class FilteredCommandOutputLineMapper {
+public class FilteredCommandOutputLineMapper implements CommandOutputLineMapper {
 
     private final ProcessBuilder processBuilder;
     private final String filter;

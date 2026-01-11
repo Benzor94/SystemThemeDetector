@@ -3,12 +3,12 @@ package hu.benzor.systemthemedetector.internal.detector.font;
 import java.util.Optional;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
-import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 
 public final class MacOsFontDetector extends FontDetector {
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'commandOutputMapper'");
     }

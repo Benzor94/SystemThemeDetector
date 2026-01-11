@@ -3,13 +3,14 @@ package hu.benzor.systemthemedetector.internal.detector.accentcolor;
 import java.util.Optional;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class WindowsAccentColorDetector extends AccentColorDetector {
 
-    private final FilteredCommandOutputLineMapper outputLineMapper;
+    private final CommandOutputLineMapper outputLineMapper;
 
     public WindowsAccentColorDetector() {
         ProcessBuilder pb = new ProcessBuilder(
@@ -23,7 +24,7 @@ public final class WindowsAccentColorDetector extends AccentColorDetector {
     }
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         return outputLineMapper;
     }
 

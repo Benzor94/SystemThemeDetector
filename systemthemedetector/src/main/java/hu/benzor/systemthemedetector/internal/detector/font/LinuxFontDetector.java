@@ -6,13 +6,14 @@ import java.util.regex.Pattern;
 
 import hu.benzor.systemthemedetector.api.environment.DesktopEnvironment;
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class LinuxFontDetector extends FontDetector {
     
-    private final FilteredCommandOutputLineMapper outputLineMapper;
+    private final CommandOutputLineMapper outputLineMapper;
 
     private final Pattern cmdOutputPattern = Pattern.compile(
         "^'(.+?)(?:,?\\s+)(\\d+(?:\\.\\d+)?)'$"
@@ -29,7 +30,7 @@ public final class LinuxFontDetector extends FontDetector {
     }
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         return outputLineMapper;
     }
 

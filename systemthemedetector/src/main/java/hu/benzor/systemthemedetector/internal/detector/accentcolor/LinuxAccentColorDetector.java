@@ -6,13 +6,14 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class LinuxAccentColorDetector extends AccentColorDetector {
 
-    private final FilteredCommandOutputLineMapper outputLineMapper;
+    private final CommandOutputLineMapper outputLineMapper;
 
     private final Pattern cmdOutputPattern = Pattern.compile("\\(<\\((\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?)\\)>,\\)");
 
@@ -32,7 +33,7 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
     }
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         return outputLineMapper;
     }
 

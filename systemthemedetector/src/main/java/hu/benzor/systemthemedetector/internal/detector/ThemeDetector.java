@@ -5,7 +5,8 @@ import java.util.function.Consumer;
 
 import hu.benzor.systemthemedetector.api.listener.ListenerHandle;
 import hu.benzor.systemthemedetector.api.theme.Theme;
-import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.detector.accentcolor.AccentColorDetector;
 import hu.benzor.systemthemedetector.internal.detector.appearance.AppearanceDetector;
 import hu.benzor.systemthemedetector.internal.detector.font.FontDetector;
@@ -35,7 +36,7 @@ permits
             .build();
             return new ListenerHandle<>(type(), Scheduler.schedule(listener));
     }
-    protected abstract FilteredCommandOutputLineMapper commandOutputMapper();
+    protected abstract CommandOutputLineMapper commandOutputMapper();
     protected abstract Optional<T> outputLineToThemeMap(String line);
     protected abstract Class<T> type();
 

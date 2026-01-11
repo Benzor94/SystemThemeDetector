@@ -5,13 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.Appearance;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class LinuxAppearanceDetector extends AppearanceDetector {
 
-    private final FilteredCommandOutputLineMapper outputLineMapper;
+    private final CommandOutputLineMapper outputLineMapper;
 
     private final Pattern cmdOutputPattern = Pattern.compile("\\(<uint32 (\\d+)>,\\)");
 
@@ -31,7 +32,7 @@ public final class LinuxAppearanceDetector extends AppearanceDetector {
     }
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         return outputLineMapper;
     }
 

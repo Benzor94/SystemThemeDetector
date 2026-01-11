@@ -3,13 +3,14 @@ package hu.benzor.systemthemedetector.internal.detector.appearance;
 import java.util.Optional;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.Appearance;
+import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class WindowsAppearanceDetector extends AppearanceDetector {
 
-    private final FilteredCommandOutputLineMapper outputLineMapper;
+    private final CommandOutputLineMapper outputLineMapper;
 
     public WindowsAppearanceDetector() {
         ProcessBuilder pb = new ProcessBuilder(
@@ -23,7 +24,7 @@ public final class WindowsAppearanceDetector extends AppearanceDetector {
     }
 
     @Override
-    protected FilteredCommandOutputLineMapper commandOutputMapper() {
+    protected CommandOutputLineMapper commandOutputMapper() {
         return outputLineMapper;
     }
 
