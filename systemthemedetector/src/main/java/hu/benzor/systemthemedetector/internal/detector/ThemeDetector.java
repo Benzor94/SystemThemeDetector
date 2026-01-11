@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import hu.benzor.systemthemedetector.api.listener.ListenerHandle;
 import hu.benzor.systemthemedetector.api.theme.Theme;
 import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
-import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.detector.accentcolor.AccentColorDetector;
 import hu.benzor.systemthemedetector.internal.detector.appearance.AppearanceDetector;
 import hu.benzor.systemthemedetector.internal.detector.font.FontDetector;
