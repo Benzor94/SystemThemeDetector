@@ -1,6 +1,5 @@
 package hu.benzor.systemthemedetector.demoapp;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import atlantafx.base.theme.PrimerDark;
@@ -43,14 +42,6 @@ public class App extends Application {
 
         scene = new Scene(root, 400, 250);
 
-        Optional<Appearance> appearance = themeDetector.getAppearance();
-        Optional<AccentColor> accentColor = themeDetector.getAccentColor();
-        Optional<Font> font = themeDetector.getFont();
-
-        appearance.ifPresent(this::setAppearance);
-        accentColor.ifPresent(this::setAccentColor);
-        font.ifPresent(this::setFont);
-
         Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
         Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
         Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
@@ -59,14 +50,6 @@ public class App extends Application {
         themeDetector.onAccentColorChange(onAccentColorChange);
         themeDetector.onFontChange(onFontChange);
         
-        /*
-        String css = """
-                -fx-accent: rgb(58, 148, 47);
-                -color-accent-emphasis: rgb(58, 148, 47);
-                """;
-        scene.getRoot().setStyle(css);
-         */
-
         stage.setTitle("System Theme Detector Demo");
         stage.setScene(scene);
         stage.show();
@@ -92,7 +75,6 @@ public class App extends Application {
         );
         AccentVariants variants = deriveBase(Color.rgb(accentColor.red(), accentColor.green(), accentColor.blue()));
         scene.getRoot().setStyle(
-            //"-fx-accent: " + cssColor + ";" //+
             "-color-accent-fg: " + toCssRgb(variants.fg()) + ";" +
             "-color-accent-emphasis: " + toCssRgb(variants.emphasis()) + ";" +
             "-color-accent-muted: " + toCssRgb(variants.muted()) + ";" +
