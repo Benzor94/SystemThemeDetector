@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -57,10 +58,19 @@ public class App extends Application {
         themeDetector.onAppearanceChange(onAppearanceChange);
         themeDetector.onAccentColorChange(onAccentColorChange);
         themeDetector.onFontChange(onFontChange);
+        
+        /*
+        String css = """
+                -fx-accent: rgb(58, 148, 47);
+                -color-accent-emphasis: rgb(58, 148, 47);
+                """;
+        scene.getRoot().setStyle(css);
+         */
 
         stage.setTitle("System Theme Detector Demo");
         stage.setScene(scene);
         stage.show();
+
     }
     public static void main(String[] args) {
         launch(args);
@@ -79,6 +89,14 @@ public class App extends Application {
         accentRegion.setStyle(
             "-fx-background-color: " + cssColor + ";" +
             "-fx-background-radius: 6;"
+        );
+        AccentVariants variants = deriveBase(Color.rgb(accentColor.red(), accentColor.green(), accentColor.blue()));
+        scene.getRoot().setStyle(
+            //"-fx-accent: " + cssColor + ";" //+
+            "-color-accent-fg: " + toCssRgb(variants.fg()) + ";" +
+            "-color-accent-emphasis: " + toCssRgb(variants.emphasis()) + ";" +
+            "-color-accent-muted: " + toCssRgb(variants.muted()) + ";" +
+            "-color-accent-subtle: " + toCssRgb(variants.sublte()) + ";"
         );
     }
 
@@ -99,4 +117,24 @@ public class App extends Application {
     private static String toCssRgb(int r, int g, int b) {
         return "rgb(" + r + "," + g + "," + b + ")";
     }
+
+    private static String toCssRgb(Color color) {
+        int red = (int) (color.getRed() * 255);
+        int green = (int) (color.getGreen() * 255);
+        int blue = (int) (color.getBlue() * 255);
+        return toCssRgb(red, green, blue);
+    }
+
+    private static AccentVariants deriveBase(Color base) {
+        Color fg = base.deriveColor(0, 0.9, 1.25, 1);
+        Color emphasis = base.deriveColor(0, 1.0, 0.85, 1);
+
+        Color muted = base.deriveColor(0, 0.95, 1.0, 0.4);
+        Color subtle = base.deriveColor(0, 0.95, 1.0, 0.15);
+
+        return new AccentVariants(fg, emphasis, muted, subtle);
+    }
+
 }
+
+record AccentVariants(Color fg, Color emphasis, Color muted, Color sublte) {}
