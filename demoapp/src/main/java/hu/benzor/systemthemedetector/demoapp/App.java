@@ -76,10 +76,6 @@ public class App extends Application {
 
     public void setAccentColor(AccentColor accentColor) {
         String cssColor = toCssRgb(accentColor.red(), accentColor.green(), accentColor.blue());
-
-        scene.getRoot().setStyle(
-            "-fx-accent: " + cssColor + ";"
-        );
         accentRegion.setStyle(
             "-fx-background-color: " + cssColor + ";" +
             "-fx-background-radius: 6;"
