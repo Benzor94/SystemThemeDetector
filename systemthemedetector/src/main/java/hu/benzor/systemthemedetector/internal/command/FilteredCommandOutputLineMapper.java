@@ -43,6 +43,10 @@ public class FilteredCommandOutputLineMapper implements CommandOutputLineMapper 
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-        return passBlankStringOnReadFailure ? lineMapper.apply("") : line.flatMap(lineMapper);
+        if (passBlankStringOnReadFailure) {
+            String unwrappedLine = line.orElse("");
+            return lineMapper.apply(unwrappedLine);
+        }
+        return line.flatMap(lineMapper);
     }
 }
