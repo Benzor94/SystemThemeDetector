@@ -15,4 +15,12 @@ permits
         return AccentColor.class;
     }
 
+    protected static int decimalToIntRgb(double decimal) {
+        if (decimal < 0 || decimal > 1) {
+            throw new IllegalArgumentException("Color member must be between 0 and 1. It was " + decimal + ".");
+        }
+        int scaled = (int) Math.round(decimal * 255);
+        return Math.max(0, Math.min(scaled, 255));
+    }
+
 }
