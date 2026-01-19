@@ -6,7 +6,9 @@ import java.util.Optional;
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class MacOsAccentColorDetector extends AccentColorDetector {
 
     private final CommandOutputLineMapper outputLineMapper;
@@ -35,10 +37,12 @@ public final class MacOsAccentColorDetector extends AccentColorDetector {
          * If the accent color is default ("Multicolour") then this command will return an error with empty stdout. 
          */
         if (line.isBlank()) {
+            log.debug("Accent color is unset, resorting to default.");
             return Optional.of(DEFAULT_COLOR);
         }
         String[] components = line.trim().split(" ");
         if (components.length < 3) {
+            log.debug("Invalid line format: {}", line);
             return Optional.empty();
         }
         try {
@@ -49,8 +53,11 @@ public final class MacOsAccentColorDetector extends AccentColorDetector {
                 .mapToDouble(Double::parseDouble)
                 .mapToInt(AccentColorDetector::decimalToIntRgb)
                 .toArray();
-            return Optional.of(AccentColor.fromArray(rgbNumbers));             
+            var color = AccentColor.fromArray(rgbNumbers);
+            log.debug("Accent color determined: {}", color);
+            return Optional.of(color);             
         } catch (IllegalArgumentException e) {
+            log.debug("Invalid line format: {}", line);
             return Optional.empty();
         }
     }
