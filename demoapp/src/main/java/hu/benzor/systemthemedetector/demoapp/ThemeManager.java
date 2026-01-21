@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 
 import hu.benzor.systemthemedetector.api.theme.Theme.AccentColor;
 import hu.benzor.systemthemedetector.api.theme.Theme.Font;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 
@@ -15,21 +14,15 @@ public class ThemeManager {
     private AccentColor color;
     private Font font;
     private String stylesheetUrl;
-    private Node rectangle;
 
-    public ThemeManager(Scene scene, AccentColor color, Font font, Node rectangle) {
+    public ThemeManager(Scene scene, AccentColor color, Font font) {
         this.scene = scene;
         this.color = color;
         this.font = font;
-        this.rectangle = rectangle;
     }
 
     public synchronized void applyTheme(AccentColor color) {
         this.color = color;
-        rectangle.setStyle(
-            "-fx-background-color: " + toCssRgb(color.red(), color.green(), color.blue()) + ";" +
-            "-fx-background-radius: 6;"
-        );
         applyThemeInternal();
     }
 

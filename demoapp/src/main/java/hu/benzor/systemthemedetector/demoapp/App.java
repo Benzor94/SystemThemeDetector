@@ -16,7 +16,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -35,25 +38,37 @@ public class App extends Application {
 
         accentRegion = new Region();
         accentRegion.setPrefSize(200, 40);
-        /*
-        ToggleButton accentButton = new ToggleButton("Set default color");
+        accentRegion.setStyle(
+            "-fx-background-color: -color-accent-emphasis;" +
+            "-fx-background-radius: 6;"
+        );
+        
+        ToggleButton accentButton = new ToggleButton("Press me!");
         accentButton.selectedProperty().addListener(
             (obs, wasSelected, isSelected) -> {
                 if (isSelected) {
-                    setDefaultAccent();
-                    accentButton.setText("Set system color");
+                    //setDefaultAccent();
+                    accentButton.setText("Release me!");
                 } else {
-                    startListeningForAccent();
-                    accentButton.setText("Set default color");
+                    // startListeningForAccent();
+                    accentButton.setText("Press me!");
                 }
             }
         );
-         */
+        
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> stage.close());
 
-        VBox root = new VBox(15, helloLabel, accentRegion, /*accentButton,*/ exitButton);
+        HBox buttons = new HBox(10, exitButton, accentButton);
+        buttons.setPadding(new Insets(20));
+        buttons.setAlignment(Pos.CENTER);
+
+        ProgressBar bar = new ProgressBar(0.75);
+        bar.setPrefWidth(200);
+
+
+        VBox root = new VBox(15, helloLabel, accentRegion, bar, buttons);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
 
@@ -62,11 +77,11 @@ public class App extends Application {
         Font font = themeDetector.getFont().orElseThrow();
         AccentColor color = themeDetector.getAccentColor().orElseThrow();
 
-        themeManager = new ThemeManager(scene, color, font, accentRegion);
+        themeManager = new ThemeManager(scene, color, font);
 
         Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
-        Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> themeManager.applyTheme(col));
-        Consumer<Font> onFontChange = f -> Platform.runLater(() -> themeManager.applyTheme(f));
+        Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
+        Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
 
         themeDetector.onAppearanceChange(onAppearanceChange);
         themeDetector.onAccentColorChange(onAccentColorChange);
@@ -89,6 +104,13 @@ public class App extends Application {
         Application.setUserAgentStylesheet(styleSheet);
     }
 
+    public void setAccentColor(AccentColor color) {
+        themeManager.applyTheme(color);
+    }
+
+    public void setFont(Font font) {
+        themeManager.applyTheme(font);
+    }
     
 
     public void setDefaultAccent() {
@@ -96,22 +118,6 @@ public class App extends Application {
         scene.getRoot().setStyle(null);
     }
 
-    /*
-    public void startListeningForAccent() {
-        themeDetector.onAccentColorChange(col -> Platform.runLater(() -> setAccentColor(col)));
-    }
-         */
-
-    private static String toCssRgb(int r, int g, int b) {
-        return "rgb(" + r + "," + g + "," + b + ")";
-    }
-
-    private static String toCssRgb(Color color) {
-        int red = (int) (color.getRed() * 255);
-        int green = (int) (color.getGreen() * 255);
-        int blue = (int) (color.getBlue() * 255);
-        return toCssRgb(red, green, blue);
-    }
 
 }
 
