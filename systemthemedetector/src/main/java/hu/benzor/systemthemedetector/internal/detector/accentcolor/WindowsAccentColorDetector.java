@@ -51,7 +51,9 @@ public final class WindowsAccentColorDetector extends AccentColorDetector {
             int r = (int) (color >>> 16) & 0xFF;
             int g = (int) (color >>> 8) & 0xFF;
             int b = (int) color & 0xFF;
-            return Optional.of(new AccentColor(r, g, b));
+            var accentColor = new AccentColor(r, g, b);
+            log.debug("Accent color determined: {}", accentColor);
+            return Optional.of(accentColor);
 
         } catch (IllegalArgumentException e) {
             log.debug("Invalid color string: {}", e.getMessage());

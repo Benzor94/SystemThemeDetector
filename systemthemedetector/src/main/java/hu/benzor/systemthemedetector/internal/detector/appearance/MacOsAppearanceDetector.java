@@ -5,7 +5,9 @@ import java.util.Optional;
 import hu.benzor.systemthemedetector.api.theme.Theme.Appearance;
 import hu.benzor.systemthemedetector.internal.command.CommandOutputLineMapper;
 import hu.benzor.systemthemedetector.internal.command.FilteredCommandOutputLineMapper;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class MacOsAppearanceDetector extends AppearanceDetector {
 
     private final CommandOutputLineMapper outputLineMapper;
@@ -32,9 +34,18 @@ public final class MacOsAppearanceDetector extends AppearanceDetector {
          * This is represented by blank string
          */
         return switch (line.trim()) {
-            case "Dark" -> Optional.of(Appearance.DARK);
-            case "" -> Optional.of(Appearance.LIGHT);
-            default -> Optional.empty();
+            case "Dark" -> {
+                log.debug("Appearance determined: {}", Appearance.DARK);
+                yield Optional.of(Appearance.DARK);
+            }
+            case "" -> {
+                log.debug("Appearance determined: {}", Appearance.LIGHT);
+                yield Optional.of(Appearance.LIGHT);
+            }
+            default -> {
+                log.debug("Invalid line format: {}", line);
+                yield Optional.empty();
+            }
         };
     }
 

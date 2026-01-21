@@ -14,10 +14,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -25,6 +28,11 @@ public class App extends Application {
     private Scene scene;
     private Region accentRegion;
     private SystemThemeDetector themeDetector = new SystemThemeDetector();
+    private ThemeManager themeManager;
+
+    private Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
+    private Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
+    private Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
 
     @Override
     public void start(Stage stage) {
@@ -32,19 +40,52 @@ public class App extends Application {
 
         accentRegion = new Region();
         accentRegion.setPrefSize(200, 40);
+        accentRegion.setStyle(
+            "-fx-background-color: -color-accent-emphasis;" +
+            "-fx-background-radius: 6;"
+        );
+        
+        ToggleButton accentButton = new ToggleButton("Press me!");
+        accentButton.selectedProperty().addListener(
+            (obs, wasSelected, isSelected) -> {
+                if (isSelected) {
+                    accentButton.setText("Release me!");
+                } else {
+                    accentButton.setText("Press me!");
+                }
+            }
+        );
+
+        CheckBox checkBox = new CheckBox("Use system theme");
+        checkBox.setSelected(true);
+        checkBox.selectedProperty().addListener(
+            (obs, wasSelected, isSelected) -> {
+                if (isSelected) {
+                    startListeningForThemeChanges();
+                } else {
+                    setDefaultTheme();
+                }
+            }
+        );        
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> stage.close());
 
-        VBox root = new VBox(15, helloLabel, accentRegion, exitButton);
+        HBox controls = new HBox(30, checkBox, exitButton);
+        controls.setPadding(new Insets(20));
+        controls.setAlignment(Pos.CENTER);
+
+        ProgressBar bar = new ProgressBar(0.75);
+        bar.setPrefWidth(200);
+
+
+        VBox root = new VBox(15, helloLabel, accentRegion, bar, accentButton, controls);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
 
-        scene = new Scene(root, 400, 250);
+        scene = new Scene(root, 400, 350);
 
-        Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
-        Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
-        Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
+        themeManager = new ThemeManager(scene);
 
         themeDetector.onAppearanceChange(onAppearanceChange);
         themeDetector.onAccentColorChange(onAccentColorChange);
@@ -67,56 +108,24 @@ public class App extends Application {
         Application.setUserAgentStylesheet(styleSheet);
     }
 
-    public void setAccentColor(AccentColor accentColor) {
-        String cssColor = toCssRgb(accentColor.red(), accentColor.green(), accentColor.blue());
-        accentRegion.setStyle(
-            "-fx-background-color: " + cssColor + ";" +
-            "-fx-background-radius: 6;"
-        );
-        AccentVariants variants = deriveBase(Color.rgb(accentColor.red(), accentColor.green(), accentColor.blue()));
-        scene.getRoot().setStyle(
-            "-color-accent-fg: " + toCssRgb(variants.fg()) + ";" +
-            "-color-accent-emphasis: " + toCssRgb(variants.emphasis()) + ";" +
-            "-color-accent-muted: " + toCssRgb(variants.muted()) + ";" +
-            "-color-accent-subtle: " + toCssRgb(variants.sublte()) + ";"
-        );
+    public void setAccentColor(AccentColor color) {
+        themeManager.applyTheme(color);
     }
 
     public void setFont(Font font) {
-        String fontFamily = font.name();
-        try {
-            double fontSize = font.size();
-            scene.getRoot().setStyle(
-                scene.getRoot().getStyle()
-                    + "-fx-font-family: '" + fontFamily + "';"
-                    + "-fx-font-size: " + fontSize + "pt;"
-            );
-        } catch (NumberFormatException e) {
+        themeManager.applyTheme(font);
+    }    
 
-        }        
+    public void setDefaultTheme() {
+        themeDetector.stopAllListeners(AccentColor.class);
+        themeDetector.stopAllListeners(Font.class);
+        themeManager.clearTheme();
     }
 
-    private static String toCssRgb(int r, int g, int b) {
-        return "rgb(" + r + "," + g + "," + b + ")";
-    }
-
-    private static String toCssRgb(Color color) {
-        int red = (int) (color.getRed() * 255);
-        int green = (int) (color.getGreen() * 255);
-        int blue = (int) (color.getBlue() * 255);
-        return toCssRgb(red, green, blue);
-    }
-
-    private static AccentVariants deriveBase(Color base) {
-        Color fg = base.deriveColor(0, 0.9, 1.25, 1);
-        Color emphasis = base.deriveColor(0, 1.0, 0.85, 1);
-
-        Color muted = base.deriveColor(0, 0.95, 1.0, 0.4);
-        Color subtle = base.deriveColor(0, 0.95, 1.0, 0.15);
-
-        return new AccentVariants(fg, emphasis, muted, subtle);
+    public void startListeningForThemeChanges() {
+        themeDetector.onAccentColorChange(onAccentColorChange);
+        themeDetector.onFontChange(onFontChange);
     }
 
 }
 
-record AccentVariants(Color fg, Color emphasis, Color muted, Color sublte) {}
