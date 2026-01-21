@@ -15,6 +15,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -55,24 +56,35 @@ public class App extends Application {
                 }
             }
         );
-        
+
+        CheckBox checkBox = new CheckBox("Use system theme");
+        checkBox.setSelected(true);
+        checkBox.selectedProperty().addListener(
+            (obs, wasSelected, isSelected) -> {
+                if (isSelected) {
+                    // Start listening again.
+                } else {
+                    // set default theme
+                }
+            }
+        );        
 
         Button exitButton = new Button("Exit");
         exitButton.setOnAction(e -> stage.close());
 
-        HBox buttons = new HBox(10, exitButton, accentButton);
-        buttons.setPadding(new Insets(20));
-        buttons.setAlignment(Pos.CENTER);
+        HBox controls = new HBox(30, checkBox, exitButton);
+        controls.setPadding(new Insets(20));
+        controls.setAlignment(Pos.CENTER);
 
         ProgressBar bar = new ProgressBar(0.75);
         bar.setPrefWidth(200);
 
 
-        VBox root = new VBox(15, helloLabel, accentRegion, bar, buttons);
+        VBox root = new VBox(15, helloLabel, accentRegion, bar, accentButton, controls);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
 
-        scene = new Scene(root, 400, 250);
+        scene = new Scene(root, 400, 350);
 
         Font font = themeDetector.getFont().orElseThrow();
         AccentColor color = themeDetector.getAccentColor().orElseThrow();
