@@ -1,6 +1,5 @@
 package hu.benzor.systemthemedetector.demoapp;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import atlantafx.base.theme.PrimerDark;
@@ -18,12 +17,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -32,6 +29,10 @@ public class App extends Application {
     private Region accentRegion;
     private SystemThemeDetector themeDetector = new SystemThemeDetector();
     private ThemeManager themeManager;
+
+    private Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
+    private Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
+    private Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
 
     @Override
     public void start(Stage stage) {
@@ -48,10 +49,8 @@ public class App extends Application {
         accentButton.selectedProperty().addListener(
             (obs, wasSelected, isSelected) -> {
                 if (isSelected) {
-                    //setDefaultAccent();
                     accentButton.setText("Release me!");
                 } else {
-                    // startListeningForAccent();
                     accentButton.setText("Press me!");
                 }
             }
@@ -62,9 +61,9 @@ public class App extends Application {
         checkBox.selectedProperty().addListener(
             (obs, wasSelected, isSelected) -> {
                 if (isSelected) {
-                    // Start listening again.
+                    startListeningForThemeChanges();
                 } else {
-                    // set default theme
+                    setDefaultTheme();
                 }
             }
         );        
@@ -90,10 +89,6 @@ public class App extends Application {
         AccentColor color = themeDetector.getAccentColor().orElseThrow();
 
         themeManager = new ThemeManager(scene, color, font);
-
-        Consumer<Appearance> onAppearanceChange = appr -> Platform.runLater(() -> setAppearance(appr));
-        Consumer<AccentColor> onAccentColorChange = col -> Platform.runLater(() -> setAccentColor(col));
-        Consumer<Font> onFontChange = f -> Platform.runLater(() -> setFont(f));
 
         themeDetector.onAppearanceChange(onAppearanceChange);
         themeDetector.onAccentColorChange(onAccentColorChange);
@@ -122,14 +117,18 @@ public class App extends Application {
 
     public void setFont(Font font) {
         themeManager.applyTheme(font);
-    }
-    
+    }    
 
-    public void setDefaultAccent() {
+    public void setDefaultTheme() {
         themeDetector.stopAllListeners(AccentColor.class);
-        scene.getRoot().setStyle(null);
+        themeDetector.stopAllListeners(Font.class);
+        themeManager.clearTheme();
     }
 
+    public void startListeningForThemeChanges() {
+        themeDetector.onAccentColorChange(onAccentColorChange);
+        themeDetector.onFontChange(onFontChange);
+    }
 
 }
 

@@ -31,16 +31,47 @@ public class ThemeManager {
         applyThemeInternal();
     }
 
+    public synchronized void clearTheme() {
+        font = null;
+        color = null;
+        applyThemeInternal();
+    }
+
     private void applyThemeInternal() {
         if (stylesheetUrl != null) {
             scene.getStylesheets().remove(stylesheetUrl);
+        }
+        if (font == null && color == null) {
+            return;
         }
         stylesheetUrl = cssToDataUrl(buildCss());
         scene.getStylesheets().add(stylesheetUrl);
     }
 
     private String buildCss() {
+        if (color == null) {
+            return """
+            .root {
+                -fx-font-family: '%s';
+            }
+            """.formatted(font.name());
+        }
         AccentVariants derived = deriveBase(color);
+        if (font == null) {
+            return """
+            .root {
+                -color-accent-fg: %s;
+                -color-accent-emphasis: %s;
+                -color-accent-muted: %s;
+                -color-accent-subtle: %s;
+            }
+            """.formatted(
+                toCssRgb(derived.fg()),
+                toCssRgb(derived.emphasis()),
+                toCssRgb(derived.muted()),
+                toCssRgb(derived.subtle())
+            );
+        }
         return """
         .root {
             -color-accent-fg: %s;
@@ -92,6 +123,6 @@ public class ThemeManager {
            URLEncoder.encode(css, StandardCharsets.UTF_8).replace("+", "%20");
 }
 
-    record AccentVariants(Color fg, Color emphasis, Color muted, Color subtle) {}
+    private record AccentVariants(Color fg, Color emphasis, Color muted, Color subtle) {}
 
 }
