@@ -85,10 +85,7 @@ public class App extends Application {
 
         scene = new Scene(root, 400, 350);
 
-        Font font = themeDetector.getFont().orElseThrow();
-        AccentColor color = themeDetector.getAccentColor().orElseThrow();
-
-        themeManager = new ThemeManager(scene, color, font);
+        themeManager = new ThemeManager(scene);
 
         themeDetector.onAppearanceChange(onAppearanceChange);
         themeDetector.onAccentColorChange(onAccentColorChange);

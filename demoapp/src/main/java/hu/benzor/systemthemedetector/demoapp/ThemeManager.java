@@ -15,10 +15,8 @@ public class ThemeManager {
     private Font font;
     private String stylesheetUrl;
 
-    public ThemeManager(Scene scene, AccentColor color, Font font) {
+    public ThemeManager(Scene scene) {
         this.scene = scene;
-        this.color = color;
-        this.font = font;
     }
 
     public synchronized void applyTheme(AccentColor color) {
