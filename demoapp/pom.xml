@@ -9,9 +9,13 @@
           <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>hu.benzor.systemthemedetector</groupId>
     <artifactId>demoapp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <javafx.version>21</javafx.version>
+        <atlantafx.version>2.0.0</atlantafx.version>
+        <javafx.plugin.version>0.0.8</javafx.plugin.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -23,13 +27,13 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21</version>
+            <version>${javafx.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.mkpaz</groupId>
             <artifactId>atlantafx-base</artifactId>
-            <version>2.0.0</version>
+            <version>${atlantafx.version}</version>
         </dependency>
 
         <dependency>
@@ -44,7 +48,7 @@
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
+                <version>${javafx.plugin.version}</version>
                 <configuration>
                     <stripDebug>true</stripDebug>
                     <stripJavaDebugAttributes>true</stripJavaDebugAttributes>

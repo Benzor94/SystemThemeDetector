@@ -10,9 +10,7 @@
           <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>hu.benzor.systemthemedetector</groupId>
     <artifactId>systemthemedetector</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
