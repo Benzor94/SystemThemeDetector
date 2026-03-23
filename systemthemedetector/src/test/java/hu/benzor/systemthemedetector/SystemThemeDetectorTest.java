@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,9 +55,9 @@ public class SystemThemeDetectorTest {
         when(appearanceDetector.getTheme()).thenReturn(Optional.of(Appearance.DARK));
         when(fontDetector.getTheme()).thenReturn(Optional.of(new Font("Ubuntu", 11)));
 
-        when(accentColorDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(AccentColor.class, null));
-        when(appearanceDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Appearance.class, null));
-        when(fontDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Font.class, null));
+        when(accentColorDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(AccentColor.class, getMockFuture()));
+        when(appearanceDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Appearance.class, getMockFuture()));
+        when(fontDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Font.class, getMockFuture()));
 
         systemThemeDetector = new SystemThemeDetector(detectorFactory);
     }
@@ -117,5 +118,9 @@ public class SystemThemeDetectorTest {
 
         Assertions.assertEquals(2, systemThemeDetector.inspectHandles().size());
         Assertions.assertTrue(systemThemeDetector.inspectHandles().stream().filter(h -> h.type() == Font.class).toList().isEmpty());
+    }
+
+    ScheduledFuture<?> getMockFuture() {
+        return mock(ScheduledFuture.class);
     }
 }
