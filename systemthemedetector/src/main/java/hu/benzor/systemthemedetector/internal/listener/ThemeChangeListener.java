@@ -1,5 +1,6 @@
 package hu.benzor.systemthemedetector.internal.listener;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -16,7 +17,7 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
     private final Supplier<Optional<T>> themeSupplier;
     private final Consumer<T> callback;
 
-    private T previousTheme;
+    private volatile T previousTheme;
 
     private ThemeChangeListener(Class<T> type, Supplier<Optional<T>> themeSupplier, Consumer<T> callback) {
         this.type = type;
@@ -62,9 +63,8 @@ public class ThemeChangeListener<T extends Theme> implements Runnable {
         }
 
         public ThemeChangeListener<T> build() {
-            if (type == null || themeSupplier == null || callback == null) {
-                throw new NullPointerException("None of the parameters can be null.");
-            }
+            Objects.requireNonNull(themeSupplier, "themeSupplier must not be null.");
+            Objects.requireNonNull(callback, "callback must not be null.");
             return new ThemeChangeListener<T>(type, themeSupplier, callback);
         }
     }

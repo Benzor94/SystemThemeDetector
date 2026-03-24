@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class MacOsAccentColorDetector extends AccentColorDetector {
 
-    private final CommandOutputLineMapper outputLineMapper;
     private static final AccentColor DEFAULT_COLOR = new AccentColor(0, 122, 255);
+    private final CommandOutputLineMapper outputLineMapper;
 
     public MacOsAccentColorDetector() {
         ProcessBuilder pb = new ProcessBuilder(
@@ -53,7 +53,7 @@ public final class MacOsAccentColorDetector extends AccentColorDetector {
                 .mapToDouble(Double::parseDouble)
                 .mapToInt(AccentColorDetector::decimalToIntRgb)
                 .toArray();
-            var color = AccentColor.fromArray(rgbNumbers);
+            AccentColor color = AccentColor.fromArray(rgbNumbers);
             log.debug("Accent color determined: {}", color);
             return Optional.of(color);             
         } catch (IllegalArgumentException e) {

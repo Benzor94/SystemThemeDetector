@@ -5,22 +5,31 @@ import java.util.concurrent.ScheduledFuture;
 
 import hu.benzor.systemthemedetector.api.theme.Theme;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class ListenerHandle<T extends Theme> {
 
-    @NonNull
     @Getter
     private final Class<T> type;
-    private final ScheduledFuture<?> task;
+    private final Optional<ScheduledFuture<?>> task;
+
+    public ListenerHandle(Class<T> type, ScheduledFuture<?> task) {
+        this.type = type;
+        this.task = Optional.ofNullable(task);
+    }
+
+    public static <T extends Theme> ListenerHandle<T> createEmpty(Class<T> type) {
+        return new ListenerHandle<>(type, null);
+    }
 
     public boolean isActive() {
-        return task == null ? false : !task.isDone();
+        return task.map(x -> !x.isDone()).orElse(false);
+    }
+
+    public boolean isEmpty() {
+        return task.isEmpty();
     }
 
     public void stop() {
-        Optional.ofNullable(task).ifPresent(x -> x.cancel(true));
+        task.ifPresent(x -> x.cancel(true));
     }
 }

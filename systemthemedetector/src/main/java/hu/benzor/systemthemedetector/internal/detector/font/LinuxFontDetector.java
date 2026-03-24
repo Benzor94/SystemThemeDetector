@@ -12,12 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class LinuxFontDetector extends FontDetector {
-    
-    private final CommandOutputLineMapper outputLineMapper;
 
-    private final Pattern cmdOutputPattern = Pattern.compile(
+    private static final Pattern cmdOutputPattern = Pattern.compile(
         "^'(.+?)(?:,?\\s+)(\\d+(?:\\.\\d+)?)'$"
     );
+    
+    private final CommandOutputLineMapper outputLineMapper;
 
     public LinuxFontDetector(DesktopEnvironment desktop) {
         ProcessBuilder pb = new ProcessBuilder(
@@ -44,7 +44,7 @@ public final class LinuxFontDetector extends FontDetector {
          * number at the end may contain decimal digits.
          */
         Matcher matcher = cmdOutputPattern.matcher(line);
-        if (!matcher.matches() || matcher.groupCount() != 2) {
+        if (!matcher.matches()) {
             log.debug("Invalid line format: {}", line);
             return Optional.empty();
         }

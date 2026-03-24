@@ -13,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class LinuxAccentColorDetector extends AccentColorDetector {
 
+    private static final Pattern cmdOutputPattern = Pattern.compile(
+        "\\(<\\((\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?)\\)>,\\)"
+    );
+
     private final CommandOutputLineMapper outputLineMapper;
 
-    private final Pattern cmdOutputPattern = Pattern.compile("\\(<\\((\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?), (\\d+(?:\\.\\d+)?)\\)>,\\)");
 
     public LinuxAccentColorDetector() {
         ProcessBuilder pb = new ProcessBuilder(
@@ -45,7 +48,7 @@ public final class LinuxAccentColorDetector extends AccentColorDetector {
          */
         Matcher matcher = cmdOutputPattern.matcher(line);
         
-        if (!matcher.matches() || matcher.groupCount() != 3) {
+        if (!matcher.matches()) {
             log.debug("Invalid line format: {}", line);
             return Optional.empty();
         }

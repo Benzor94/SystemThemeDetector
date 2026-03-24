@@ -33,7 +33,7 @@ permits
             .themeSupplier(this::getThemeInternal)
             .callback(callback)
             .build();
-            return new ListenerHandle<>(type(), Scheduler.schedule(listener));
+        return new ListenerHandle<>(type(), Scheduler.schedule(listener));
     }
     protected abstract CommandOutputLineMapper commandOutputMapper();
     protected abstract Optional<T> outputLineToThemeMap(String line);

@@ -1,6 +1,5 @@
 package hu.benzor.systemthemedetector;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,7 +15,6 @@ import hu.benzor.systemthemedetector.api.theme.Theme.Font;
 import hu.benzor.systemthemedetector.internal.detector.DetectorFactory;
 import hu.benzor.systemthemedetector.internal.detector.ThemeDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
-
 
 public class SystemThemeDetector {
 
@@ -34,48 +32,48 @@ public class SystemThemeDetector {
     }
 
     SystemThemeDetector(DetectorFactory detectorFactory) {
-        this.platform = detectorFactory.getPlatform();
-        this.desktop = detectorFactory.getDesktop();
+        this.platform = detectorFactory.platform();
+        this.desktop = detectorFactory.desktop();
         this.accentColorDetector = detectorFactory.createAccentColorDetector();
         this.appearanceDetector = detectorFactory.createAppearanceDetector();
         this.fontDetector = detectorFactory.createFontDetector();
     }
 
     public Optional<AccentColor> getAccentColor() {
-        return accentColorDetector.flatMap(x -> x.getTheme());
+        return accentColorDetector.flatMap(ThemeDetector::getTheme);
     }
 
     public Optional<Appearance> getAppearance() {
-        return appearanceDetector.flatMap(x -> x.getTheme());
+        return appearanceDetector.flatMap(ThemeDetector::getTheme);
     }
-    
+
     public Optional<Font> getFont() {
-        return fontDetector.flatMap(x -> x.getTheme());
+        return fontDetector.flatMap(ThemeDetector::getTheme);
     }
 
     public ListenerHandle<AccentColor> onAccentColorChange(Consumer<AccentColor> callback) {
+        removeInactiveHandles();
         ListenerHandle<AccentColor> handle = accentColorDetector
-            .map(x -> x.registerCallback(callback))
-            .orElseGet(() -> new ListenerHandle<>(AccentColor.class, null));
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(AccentColor.class));
         listenerHandles.add(handle);
         return handle;
     }
 
     public ListenerHandle<Appearance> onAppearanceChange(Consumer<Appearance> callback) {
+        removeInactiveHandles();
         ListenerHandle<Appearance> handle = appearanceDetector
-            .map(x -> x.registerCallback(callback))
-            .orElseGet(() -> new ListenerHandle<>(Appearance.class, null));
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(Appearance.class));
         listenerHandles.add(handle);
         return handle;
     }
 
     public ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
-        if (platform != Platform.LINUX) {
-            return new ListenerHandle<>(Font.class, null);
-        }
+        removeInactiveHandles();
         ListenerHandle<Font> handle = fontDetector
-            .orElseThrow(() -> new IllegalStateException("Font detector must exist on Linux."))
-            .registerCallback(callback);
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(Font.class));
         listenerHandles.add(handle);
         return handle;
     }
@@ -89,15 +87,14 @@ public class SystemThemeDetector {
     }
 
     public void stopAllListeners(Class<? extends Theme> type) {
-        Arrays
-            .stream(listenerHandles.toArray(new ListenerHandle<?>[0]))
-            .filter(handle -> type.isAssignableFrom(handle.type()))
-            .forEach(
+        listenerHandles.removeIf(
                 handle -> {
-                    listenerHandles.remove(handle);
-                    handle.stop();
-                }
-            );
+                    if (type.isAssignableFrom(handle.type())) {
+                        handle.stop();
+                        return true;
+                    }
+                    return false;
+                });
     }
 
     public void stopAllListeners() {
@@ -106,5 +103,9 @@ public class SystemThemeDetector {
 
     List<ListenerHandle<? extends Theme>> inspectHandles() {
         return listenerHandles.stream().toList();
+    }
+
+    private void removeInactiveHandles() {
+        listenerHandles.removeIf(handle -> !handle.isActive());
     }
 }
