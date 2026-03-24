@@ -7,7 +7,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class FilteredCommandOutputLineMapper implements CommandOutputLineMapper {
 
@@ -32,14 +34,14 @@ public class FilteredCommandOutputLineMapper implements CommandOutputLineMapper 
         try {
             Process process = processBuilder.start();
             try (BufferedReader reader = process.inputReader()) {
-                line = reader.lines().filter(s -> filter == null ? true : s.contains(filter)).findFirst();
+                line = reader.lines().filter(s -> filter == null || s.contains(filter)).findFirst();
             } finally {
                 if (!process.waitFor(1, TimeUnit.SECONDS)) {
                     process.destroyForcibly();
                 }
             }
         } catch (IOException | IndexOutOfBoundsException e){
-            
+            log.debug("Failed to read process output", e);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
