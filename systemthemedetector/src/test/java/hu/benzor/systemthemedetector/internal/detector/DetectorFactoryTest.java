@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -34,21 +33,20 @@ public class DetectorFactoryTest {
     @Mock
     private EnvironmentDetector environmentDetector;
 
-    @InjectMocks
-    private DetectorFactory detectorFactory;
-
     @ParameterizedTest
-    @EnumSource(value = Platform.class, names = {"UNKNOWN"}, mode = EnumSource.Mode.EXCLUDE)
+    @EnumSource(value = Platform.class, names = { "UNKNOWN" }, mode = EnumSource.Mode.EXCLUDE)
     void testDetectorFactory(Platform platform) {
         setEnvironment(platform, DesktopEnvironment.KDE);
+        DetectorFactory detectorFactory = new DetectorFactory(environmentDetector);
 
-        Platform resultPlatform = detectorFactory.getPlatform();
-        DesktopEnvironment resultDesktop = detectorFactory.getDesktop();
+        Platform resultPlatform = detectorFactory.platform();
+        DesktopEnvironment resultDesktop = detectorFactory.desktop();
         Optional<ThemeDetector<AccentColor>> accentColorDetector = detectorFactory.createAccentColorDetector();
         Optional<ThemeDetector<Appearance>> appearanceDetector = detectorFactory.createAppearanceDetector();
         Optional<ThemeDetector<Font>> fontDetector = detectorFactory.createFontDetector();
 
-        DesktopEnvironment expectedDesktop = platform == Platform.LINUX ? DesktopEnvironment.KDE : DesktopEnvironment.UNKNOWN;
+        DesktopEnvironment expectedDesktop = platform == Platform.LINUX ? DesktopEnvironment.KDE
+                : DesktopEnvironment.UNKNOWN;
         Class<? extends ThemeDetector<AccentColor>> expectedAccColDtor = switch (platform) {
             case LINUX -> LinuxAccentColorDetector.class;
             case MACOS -> MacOsAccentColorDetector.class;

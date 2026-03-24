@@ -45,8 +45,8 @@ public class SystemThemeDetectorTest {
 
         ThemeDetector<Font> fontDetector = mock(LinuxFontDetector.class);
 
-        when(detectorFactory.getPlatform()).thenReturn(Platform.LINUX);
-        when(detectorFactory.getDesktop()).thenReturn(DesktopEnvironment.GNOME);
+        when(detectorFactory.platform()).thenReturn(Platform.LINUX);
+        when(detectorFactory.desktop()).thenReturn(DesktopEnvironment.GNOME);
         when(detectorFactory.createAccentColorDetector()).thenReturn(Optional.of(accentColorDetector));
         when(detectorFactory.createAppearanceDetector()).thenReturn(Optional.of(appearanceDetector));
         when(detectorFactory.createFontDetector()).thenReturn(Optional.of(fontDetector));
@@ -55,8 +55,10 @@ public class SystemThemeDetectorTest {
         when(appearanceDetector.getTheme()).thenReturn(Optional.of(Appearance.DARK));
         when(fontDetector.getTheme()).thenReturn(Optional.of(new Font("Ubuntu", 11)));
 
-        when(accentColorDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(AccentColor.class, getMockFuture()));
-        when(appearanceDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Appearance.class, getMockFuture()));
+        when(accentColorDetector.registerCallback(any()))
+                .thenReturn(new ListenerHandle<>(AccentColor.class, getMockFuture()));
+        when(appearanceDetector.registerCallback(any()))
+                .thenReturn(new ListenerHandle<>(Appearance.class, getMockFuture()));
         when(fontDetector.registerCallback(any())).thenReturn(new ListenerHandle<>(Font.class, getMockFuture()));
 
         systemThemeDetector = new SystemThemeDetector(detectorFactory);
@@ -75,9 +77,12 @@ public class SystemThemeDetectorTest {
 
     @Test
     void testRegisteringCallbacks() {
-        ListenerHandle<AccentColor> accentColorHandle = systemThemeDetector.onAccentColorChange((col) -> {});
-        ListenerHandle<Appearance> appearanceHandle = systemThemeDetector.onAppearanceChange((app) -> {});
-        ListenerHandle<Font> fontHandle = systemThemeDetector.onFontChange((font) -> {});
+        ListenerHandle<AccentColor> accentColorHandle = systemThemeDetector.onAccentColorChange((col) -> {
+        });
+        ListenerHandle<Appearance> appearanceHandle = systemThemeDetector.onAppearanceChange((app) -> {
+        });
+        ListenerHandle<Font> fontHandle = systemThemeDetector.onFontChange((font) -> {
+        });
 
         Assertions.assertEquals(AccentColor.class, accentColorHandle.type());
         Assertions.assertEquals(Appearance.class, appearanceHandle.type());
@@ -95,9 +100,12 @@ public class SystemThemeDetectorTest {
 
     @Test
     void testStopAllListeners() {
-        systemThemeDetector.onAccentColorChange((col) -> {});
-        systemThemeDetector.onAppearanceChange((app) -> {});
-        systemThemeDetector.onFontChange((font) -> {});
+        systemThemeDetector.onAccentColorChange((col) -> {
+        });
+        systemThemeDetector.onAppearanceChange((app) -> {
+        });
+        systemThemeDetector.onFontChange((font) -> {
+        });
 
         Assertions.assertEquals(3, systemThemeDetector.inspectHandles().size());
 
@@ -108,16 +116,20 @@ public class SystemThemeDetectorTest {
 
     @Test
     void testStopSpecificListeners() {
-        systemThemeDetector.onAccentColorChange((col) -> {});
-        systemThemeDetector.onAppearanceChange((app) -> {});
-        systemThemeDetector.onFontChange((font) -> {});
+        systemThemeDetector.onAccentColorChange((col) -> {
+        });
+        systemThemeDetector.onAppearanceChange((app) -> {
+        });
+        systemThemeDetector.onFontChange((font) -> {
+        });
 
         Assertions.assertEquals(3, systemThemeDetector.inspectHandles().size());
 
         systemThemeDetector.stopAllListeners(Font.class);
 
         Assertions.assertEquals(2, systemThemeDetector.inspectHandles().size());
-        Assertions.assertTrue(systemThemeDetector.inspectHandles().stream().filter(h -> h.type() == Font.class).toList().isEmpty());
+        Assertions.assertTrue(
+                systemThemeDetector.inspectHandles().stream().filter(h -> h.type() == Font.class).toList().isEmpty());
     }
 
     ScheduledFuture<?> getMockFuture() {

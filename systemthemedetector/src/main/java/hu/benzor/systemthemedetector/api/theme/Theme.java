@@ -1,34 +1,14 @@
 package hu.benzor.systemthemedetector.api.theme;
 
-import java.util.Optional;
-
-import lombok.Getter;
-
 public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme.Font {
 
-    public enum Appearance implements Theme {
-        NO_PREFERENCE(0),
-        DARK(1),
-        LIGHT(2);
-
-        @Getter
-        private final int id;
-
-        private Appearance(int id) {
-            this.id = id;
-        }
-
-        public static Optional<Appearance> fromId(int id) {
-            return switch (id) {
-                case 0 -> Optional.of(NO_PREFERENCE);
-                case 1 -> Optional.of(DARK);
-                case 2 -> Optional.of(LIGHT);
-                default -> Optional.empty();
-            };
-        }
+    enum Appearance implements Theme {
+        NO_PREFERENCE,
+        DARK,
+        LIGHT
     }
 
-    public record AccentColor(int red, int green, int blue) implements Theme {
+    record AccentColor(int red, int green, int blue) implements Theme {
 
         public AccentColor {
             verifyColorNumber(red);
@@ -50,7 +30,7 @@ public sealed interface Theme permits Theme.Appearance, Theme.AccentColor, Theme
         }
     }
 
-    public record Font(String name, double size) implements Theme {
+    record Font(String name, double size) implements Theme {
         public Font {
             if (name.isBlank()) {
                 throw new IllegalArgumentException("Name must not be blank.");

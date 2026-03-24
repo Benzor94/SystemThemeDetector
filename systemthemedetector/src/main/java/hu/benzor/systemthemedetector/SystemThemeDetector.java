@@ -16,7 +16,6 @@ import hu.benzor.systemthemedetector.internal.detector.DetectorFactory;
 import hu.benzor.systemthemedetector.internal.detector.ThemeDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
 
-
 public class SystemThemeDetector {
 
     private final List<ListenerHandle<? extends Theme>> listenerHandles = new CopyOnWriteArrayList<>();
@@ -33,8 +32,8 @@ public class SystemThemeDetector {
     }
 
     SystemThemeDetector(DetectorFactory detectorFactory) {
-        this.platform = detectorFactory.getPlatform();
-        this.desktop = detectorFactory.getDesktop();
+        this.platform = detectorFactory.platform();
+        this.desktop = detectorFactory.desktop();
         this.accentColorDetector = detectorFactory.createAccentColorDetector();
         this.appearanceDetector = detectorFactory.createAppearanceDetector();
         this.fontDetector = detectorFactory.createFontDetector();
@@ -47,7 +46,7 @@ public class SystemThemeDetector {
     public Optional<Appearance> getAppearance() {
         return appearanceDetector.flatMap(ThemeDetector::getTheme);
     }
-    
+
     public Optional<Font> getFont() {
         return fontDetector.flatMap(ThemeDetector::getTheme);
     }
@@ -55,8 +54,8 @@ public class SystemThemeDetector {
     public ListenerHandle<AccentColor> onAccentColorChange(Consumer<AccentColor> callback) {
         removeInactiveHandles();
         ListenerHandle<AccentColor> handle = accentColorDetector
-            .map(x -> x.registerCallback(callback))
-            .orElseGet(() -> ListenerHandle.createEmpty(AccentColor.class));
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(AccentColor.class));
         listenerHandles.add(handle);
         return handle;
     }
@@ -64,8 +63,8 @@ public class SystemThemeDetector {
     public ListenerHandle<Appearance> onAppearanceChange(Consumer<Appearance> callback) {
         removeInactiveHandles();
         ListenerHandle<Appearance> handle = appearanceDetector
-            .map(x -> x.registerCallback(callback))
-            .orElseGet(() -> ListenerHandle.createEmpty(Appearance.class));
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(Appearance.class));
         listenerHandles.add(handle);
         return handle;
     }
@@ -73,8 +72,8 @@ public class SystemThemeDetector {
     public ListenerHandle<Font> onFontChange(Consumer<Font> callback) {
         removeInactiveHandles();
         ListenerHandle<Font> handle = fontDetector
-            .map(x -> x.registerCallback(callback))
-            .orElseGet(() -> ListenerHandle.createEmpty(Font.class));
+                .map(x -> x.registerCallback(callback))
+                .orElseGet(() -> ListenerHandle.createEmpty(Font.class));
         listenerHandles.add(handle);
         return handle;
     }
@@ -89,14 +88,13 @@ public class SystemThemeDetector {
 
     public void stopAllListeners(Class<? extends Theme> type) {
         listenerHandles.removeIf(
-            handle -> {
-                if (type.isAssignableFrom(handle.type())) {
-                    handle.stop();
-                    return true;
-                }
-                return false;
-            }
-        );
+                handle -> {
+                    if (type.isAssignableFrom(handle.type())) {
+                        handle.stop();
+                        return true;
+                    }
+                    return false;
+                });
     }
 
     public void stopAllListeners() {

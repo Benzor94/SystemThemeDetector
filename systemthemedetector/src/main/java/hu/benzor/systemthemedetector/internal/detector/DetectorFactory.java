@@ -17,17 +17,21 @@ import hu.benzor.systemthemedetector.internal.detector.font.LinuxFontDetector;
 import hu.benzor.systemthemedetector.internal.detector.font.MacOsFontDetector;
 import hu.benzor.systemthemedetector.internal.detector.font.WindowsFontDetector;
 import hu.benzor.systemthemedetector.internal.environment.EnvironmentDetector;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 
-@RequiredArgsConstructor
 public class DetectorFactory {
 
-    private final EnvironmentDetector environmentDetector;
-    private Platform platform;
-    private DesktopEnvironment desktop;
+    @Getter
+    private final Platform platform;
+    @Getter
+    private final DesktopEnvironment desktop;
+
+    public DetectorFactory(EnvironmentDetector environmentDetector) {
+        this.platform = environmentDetector.getPlatform();
+        this.desktop = platform == Platform.LINUX ? environmentDetector.getDesktop() : DesktopEnvironment.UNKNOWN;
+    }
 
     public Optional<ThemeDetector<AccentColor>> createAccentColorDetector() {
-        setEnvironment();
         return switch (platform) {
             case LINUX -> Optional.of(new LinuxAccentColorDetector());
             case MACOS -> Optional.of(new MacOsAccentColorDetector());
@@ -37,7 +41,6 @@ public class DetectorFactory {
     }
 
     public Optional<ThemeDetector<Appearance>> createAppearanceDetector() {
-        setEnvironment();
         return switch (platform) {
             case LINUX -> Optional.of(new LinuxAppearanceDetector());
             case MACOS -> Optional.of(new MacOsAppearanceDetector());
@@ -47,7 +50,6 @@ public class DetectorFactory {
     }
 
     public Optional<ThemeDetector<Font>> createFontDetector() {
-        setEnvironment();
         return switch (platform) {
             case LINUX -> Optional.of(new LinuxFontDetector(desktop));
             case MACOS -> Optional.of(new MacOsFontDetector());
@@ -55,22 +57,4 @@ public class DetectorFactory {
             case UNKNOWN -> Optional.empty();
         };
     }
-
-    public Platform getPlatform() {
-        setEnvironment();
-        return platform;
-    }
-
-    public DesktopEnvironment getDesktop() {
-        setEnvironment();
-        return desktop;
-    }
-
-    private void setEnvironment() {
-        if (platform == null) {
-            platform = environmentDetector.getPlatform();
-            desktop = platform == Platform.LINUX ? environmentDetector.getDesktop() : DesktopEnvironment.UNKNOWN;
-        }
-    }
-
 }
